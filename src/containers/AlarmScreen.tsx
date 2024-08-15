@@ -1,9 +1,19 @@
-import { View, Text, Image, ScrollView } from "react-native";
-import { Pressable } from "react-native";
+import { View, Text, Image, ScrollView, Pressable } from "react-native";
 import { SvgXml } from "react-native-svg";
 import AlarmCard from "../Components/AlarmCard";
+import DialogueBox from "../Components/DialogueBox";
+import { useState } from "react";
+
+interface Alarm {
+  status: boolean;
+  distance: number;
+  location: string;
+}
 
 const AlarmScreen = () => {
+  const [DialogueBoxInformation, setDialogueBoxInformation] = useState("");
+  const [modalVisible, setModalVisible] = useState(true);
+
   return (
     <View
       style={{
@@ -79,6 +89,7 @@ const AlarmScreen = () => {
         <AlarmCard />
         <AlarmCard />
         <AlarmCard />
+        <DialogueBox modalVisible={true} setModalVisible={setModalVisible} />
       </ScrollView>
     </View>
   );

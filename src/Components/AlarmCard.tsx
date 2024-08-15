@@ -1,7 +1,34 @@
-import { View, Image, Text, Pressable } from "react-native";
-import { useState } from "react";
+import { View, Image, Text, Pressable, Animated } from "react-native";
+import { useState, useRef } from "react";
 
 const Components = () => {
+  const [currentSelectedDistance, setcurrentSelectedDistance] = useState(1);
+  const backgroundColorAnim = useRef(new Animated.Value(0)).current;
+
+  // Function to handle the button press (start animation)
+  const handlePressIn = () => {
+    Animated.timing(backgroundColorAnim, {
+      toValue: 1, // Transition to grey color
+      duration: 3000, // Duration of the animation
+      useNativeDriver: false, // Color animation doesn't support native driver
+    }).start();
+  };
+
+  // Function to handle the button release (reset animation)
+  const handlePressOut = () => {
+    Animated.timing(backgroundColorAnim, {
+      toValue: 0, // Transition back to original color
+      duration: 3000,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  // Interpolating the animated value to transition between colors
+  const backgroundColor = backgroundColorAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["#FFFFFF", "#D3D3D3"], // From white to light grey
+  });
+
   return (
     <View
       style={{
@@ -82,12 +109,46 @@ const Components = () => {
             }}
           >
             <Pressable
-              style={{
-                borderColor: "black",
-                width: 70,
+              onPressIn={handlePressIn}
+              onPressOut={handlePressOut}
+              onPress={() => {
+                if (currentSelectedDistance == 1) {
+                  setcurrentSelectedDistance(2);
+                } else if (currentSelectedDistance == 2) {
+                  setcurrentSelectedDistance(3);
+                } else if (currentSelectedDistance == 3) {
+                  setcurrentSelectedDistance(5);
+                } else if (currentSelectedDistance == 5) {
+                  setcurrentSelectedDistance(1);
+                }
               }}
             >
-              <Text> 4 miles radius</Text>
+              <Animated.View
+                style={{
+                  borderColor: "black",
+                  backgroundColor: backgroundColor,
+                  maxWidth: 100,
+                  padding: 5,
+                  borderRadius: 20,
+                  borderWidth: 1,
+                  paddingHorizontal: 10,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text
+                  style={{
+                    maxWidth: 100,
+                    overflow: "hidden",
+                    height: "auto",
+                    fontSize: 12,
+                    maxHeight: 20,
+                  }}
+                >
+                  {currentSelectedDistance}km radius
+                </Text>
+              </Animated.View>
             </Pressable>
 
             <Pressable
