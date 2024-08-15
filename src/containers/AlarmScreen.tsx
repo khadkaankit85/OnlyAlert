@@ -3,16 +3,28 @@ import { SvgXml } from "react-native-svg";
 import AlarmCard from "../Components/AlarmCard";
 import DialogueBox from "../Components/DialogueBox";
 import { useState } from "react";
-
-interface Alarm {
-  status: boolean;
-  distance: number;
-  location: string;
-}
+import { Alarm } from "../Constants";
 
 const AlarmScreen = () => {
-  const [DialogueBoxInformation, setDialogueBoxInformation] = useState("");
+  const [DialogueBoxInformation, setDialogueBoxInformation] = useState<Alarm>();
   const [modalVisible, setModalVisible] = useState(true);
+  const Alarms: Alarm[] = [
+    {
+      status: true,
+      distance: 5,
+      location: "Home",
+    },
+    {
+      status: false,
+      distance: 10,
+      location: "Work",
+    },
+  ];
+
+  function onAlarmSet(alarm: Alarm) {
+    setDialogueBoxInformation(alarm);
+    setModalVisible(true);
+  }
 
   return (
     <View
@@ -64,32 +76,22 @@ const AlarmScreen = () => {
           padding: 25,
         }}
       >
-        <AlarmCard />
-        <AlarmCard />
-        <AlarmCard />
-        <AlarmCard />
-        <AlarmCard />
-        <AlarmCard />
-        <AlarmCard />
-        <AlarmCard />
-        <AlarmCard />
-        <AlarmCard />
-        <AlarmCard />
-        <AlarmCard />
-        <AlarmCard />
-        <AlarmCard />
-        <AlarmCard />
-        <AlarmCard />
-        <AlarmCard />
-        <AlarmCard />
-        <AlarmCard />
-        <AlarmCard />
-        <AlarmCard />
-        <AlarmCard />
-        <AlarmCard />
-        <AlarmCard />
-        <AlarmCard />
-        <DialogueBox modalVisible={true} setModalVisible={setModalVisible} />
+        {Alarms.map((alarm, index) => {
+          return (
+            <AlarmCard
+              key={index}
+              onAlarmSet={() => {
+                onAlarmSet(alarm);
+              }}
+              alarm={alarm}
+            />
+          );
+        })}
+        <DialogueBox
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          DialogueBoxInformation={DialogueBoxInformation}
+        />
       </ScrollView>
     </View>
   );

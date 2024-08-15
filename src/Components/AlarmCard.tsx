@@ -1,7 +1,13 @@
 import { View, Image, Text, Pressable, Animated } from "react-native";
 import { useState, useRef } from "react";
+import { Alarm } from "../Constants";
 
-const Components = () => {
+interface AlarmCardProps {
+  onAlarmSet: (alarm: Alarm) => void;
+  alarm: Alarm;
+}
+
+const Components = ({ onAlarmSet, alarm }: AlarmCardProps) => {
   const [currentSelectedDistance, setcurrentSelectedDistance] = useState(1);
   const backgroundColorAnim = useRef(new Animated.Value(0)).current;
 
@@ -79,7 +85,7 @@ const Components = () => {
               fontFamily: "ubuntu",
             }}
           >
-            22 Miles Away
+            {alarm.distance}Km Away
           </Text>
           <Text
             style={{
@@ -88,7 +94,7 @@ const Components = () => {
               fontFamily: "ubuntu",
             }}
           >
-            Loots 2, Tartu
+            {alarm.location}
           </Text>
         </View>
 
@@ -152,6 +158,9 @@ const Components = () => {
             </Pressable>
 
             <Pressable
+              onPress={() => {
+                onAlarmSet(alarm);
+              }}
               style={{
                 width: 70,
                 height: 30,

@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import { View, Text, Modal, Pressable, StyleSheet, Button } from "react-native";
+import { Alarm } from "../Constants";
+import { SvgXml } from "react-native-svg";
+import AnimatedButton from "./AnimatedButton";
 
 interface DialogueBoxProps {
   modalVisible: boolean;
   setModalVisible: (statusOfModal: boolean) => void;
+  DialogueBoxInformation: Alarm | undefined;
 }
 
 const DialogueBox = ({ modalVisible, setModalVisible }: DialogueBoxProps) => {
@@ -19,13 +23,30 @@ const DialogueBox = ({ modalVisible, setModalVisible }: DialogueBoxProps) => {
       >
         <View style={styles.modalBackground}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>This is a dialog box!</Text>
+            <View
+              style={{
+                width: 100,
+                height: 100,
+                backgroundColor: "#FF69B4",
+                marginBottom: 20,
+                borderRadius: (1 / 2) * 100,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <AnimatedButton />
+            </View>
+            <Text style={styles.modalText}>
+              Now you can relax and enjoy your trip. we will inform you when you
+              reach your destination.
+            </Text>
 
             <Pressable
               style={[styles.button, styles.buttonClose]}
               onPress={() => setModalVisible(false)}
             >
-              <Text style={styles.textStyle}>Close</Text>
+              <Text style={styles.textStyle}>Thanks</Text>
             </Pressable>
           </View>
         </View>
