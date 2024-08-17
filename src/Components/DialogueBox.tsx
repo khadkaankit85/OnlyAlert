@@ -10,7 +10,11 @@ interface DialogueBoxProps {
   DialogueBoxInformation: Alarm | undefined;
 }
 
-const DialogueBox = ({ modalVisible, setModalVisible }: DialogueBoxProps) => {
+const DialogueBox = ({
+  modalVisible,
+  setModalVisible,
+  DialogueBoxInformation,
+}: DialogueBoxProps) => {
   console.log("mounted the modal");
 
   return (
@@ -38,8 +42,15 @@ const DialogueBox = ({ modalVisible, setModalVisible }: DialogueBoxProps) => {
               <AnimatedButton />
             </View>
             <Text style={styles.modalText}>
-              Now you can relax and enjoy your trip. we will inform you when you
-              reach your destination.
+              Now you can relax and enjoy your trip. we will inform you are{" "}
+              <Text
+                style={{
+                  fontWeight: "bold",
+                }}
+              >
+                {DialogueBoxInformation?.distance}km away from{" "}
+                {DialogueBoxInformation?.location}
+              </Text>
             </Text>
 
             <Pressable

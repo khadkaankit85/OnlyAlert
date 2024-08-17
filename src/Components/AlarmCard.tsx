@@ -4,13 +4,17 @@ import { Alarm } from "../Constants";
 
 interface AlarmCardProps {
   onAlarmSet: (alarm: Alarm) => void;
+  onDistanceChange: (alarm: Alarm) => void;
   alarm: Alarm;
 }
 
-const Components = ({ onAlarmSet, alarm }: AlarmCardProps) => {
-  const [currentSelectedDistance, setcurrentSelectedDistance] = useState(1);
+const Components = ({
+  onAlarmSet,
+  onDistanceChange,
+  alarm,
+}: AlarmCardProps) => {
   const backgroundColorAnim = useRef(new Animated.Value(0)).current;
-
+  const distanceFromTarget = useRef(alarm.distance);
   // Function to handle the button press (start animation)
   const handlePressIn = () => {
     Animated.timing(backgroundColorAnim, {
@@ -118,15 +122,8 @@ const Components = ({ onAlarmSet, alarm }: AlarmCardProps) => {
               onPressIn={handlePressIn}
               onPressOut={handlePressOut}
               onPress={() => {
-                if (currentSelectedDistance == 1) {
-                  setcurrentSelectedDistance(2);
-                } else if (currentSelectedDistance == 2) {
-                  setcurrentSelectedDistance(3);
-                } else if (currentSelectedDistance == 3) {
-                  setcurrentSelectedDistance(5);
-                } else if (currentSelectedDistance == 5) {
-                  setcurrentSelectedDistance(1);
-                }
+                console.log("Pressed");
+                onDistanceChange(alarm);
               }}
             >
               <Animated.View
@@ -152,7 +149,7 @@ const Components = ({ onAlarmSet, alarm }: AlarmCardProps) => {
                     maxHeight: 20,
                   }}
                 >
-                  {currentSelectedDistance}km radius
+                  {alarm.distance}km radius
                 </Text>
               </Animated.View>
             </Pressable>
