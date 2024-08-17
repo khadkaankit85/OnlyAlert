@@ -14,7 +14,6 @@ const Components = ({
   alarm,
 }: AlarmCardProps) => {
   const backgroundColorAnim = useRef(new Animated.Value(0)).current;
-  const distanceFromTarget = useRef(alarm.distance);
   // Function to handle the button press (start animation)
   const handlePressIn = () => {
     Animated.timing(backgroundColorAnim, {
