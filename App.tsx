@@ -27,7 +27,6 @@ export default function App() {
             flex: 1,
             backgroundColor: "#cccccc",
             width: "100%",
-            borderColor: "red",
             borderWidth: 4,
             paddingTop: 55,
           }}
