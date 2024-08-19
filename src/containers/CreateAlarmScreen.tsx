@@ -1,9 +1,10 @@
-import { View, Text, Pressable, ScrollView } from "react-native";
+import { View, Text, Pressable, ScrollView, Alert } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { SvgXml } from "react-native-svg";
 import DialogueBox from "../Components/DialogueBox";
 import { Alarm } from "../Constants";
 import MapView from "react-native-maps";
+import { Marker } from "react-native-maps";
 import { useState, useEffect } from "react";
 import * as Location from "expo-location";
 
@@ -26,30 +27,119 @@ const CreateAlarmScreen = () => {
         setLocation(location);
       } catch (error) {
         setErrorMsg("Error getting location");
+        Alert.alert("Error", errorMsg as string);
       }
     })();
   }, []);
 
-  const initialRegion = location
-    ? {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      }
-    : {
-        latitude: 37.78825,
-        longitude: -122.4324,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      };
+  if (location === null) {
+    return <Text>Loading...</Text>;
+  }
+
+  const initialRegion = {
+    latitude: location.coords.latitude,
+    longitude: location.coords.longitude,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  };
 
   return (
     <View style={{ flex: 1, width: "100%" }}>
       <MapView
+        customMapStyle={[
+          {
+            elementType: "geometry",
+            stylers: [{ color: "#212121" }],
+          },
+          {
+            elementType: "labels.icon",
+            stylers: [{ visibility: "off" }],
+          },
+          {
+            elementType: "labels.text.fill",
+            stylers: [{ color: "#757575" }],
+          },
+          {
+            elementType: "labels.text.stroke",
+            stylers: [{ color: "#212121" }],
+          },
+          {
+            featureType: "administrative",
+            elementType: "geometry",
+            stylers: [{ color: "#757575" }],
+          },
+          {
+            featureType: "poi",
+            elementType: "geometry",
+            stylers: [{ color: "#212121" }],
+          },
+          {
+            featureType: "road",
+            elementType: "geometry",
+            stylers: [{ color: "#484848" }],
+          },
+          {
+            featureType: "water",
+            elementType: "geometry",
+            stylers: [{ color: "#000000" }],
+          },
+        ]}
         style={{ flex: 1, width: "100%", height: "100%" }}
         initialRegion={initialRegion}
-      />
+        onRegionChange={(region) => {
+          setLocation({
+            coords: {
+              latitude: region.latitude,
+              longitude: region.longitude,
+              altitude: 0,
+              accuracy: 0,
+              altitudeAccuracy: 0,
+              heading: 0,
+              speed: 0,
+            },
+            timestamp: 0,
+          });
+        }}
+      >
+        <View
+          style={{
+            backgroundColor: "white",
+            width: "90%",
+            height: 60,
+            marginTop: 80,
+            marginHorizontal: "auto",
+            borderRadius: "50%",
+          }}
+        ></View>
+        <Marker
+          image={{
+            uri: "https://img.icons8.com/?size=100&id=0sTmBjAQDKfi&format=png&color=000000",
+          }}
+          draggable
+          coordinate={location.coords}
+          onDragEnd={(e) =>
+            setLocation(
+              e.nativeEvent.coordinate as unknown as Location.LocationObject
+            )
+          }
+        >
+          <View
+            style={{
+              backgroundColor: "white",
+              padding: 10,
+              borderRadius: 5,
+            }}
+          >
+            <Text
+              style={{
+                fontFamily: "montserrat",
+                fontSize: 16,
+              }}
+            ></Text>
+          </View>
+        </Marker>
+      </MapView>
+
       {/* Uncomment and use the below code if you need additional UI components */}
       {/* 
       <View
