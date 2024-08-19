@@ -4,8 +4,10 @@ import AlarmCard from "../Components/AlarmCard";
 import DialogueBox from "../Components/DialogueBox";
 import { useState } from "react";
 import { Alarm } from "../Constants";
+import { useNavigation } from "@react-navigation/native";
 
 const AlarmScreen = () => {
+  const navigation = useNavigation();
   const [DialogueBoxInformation, setDialogueBoxInformation] = useState<Alarm>();
   const [modalVisible, setModalVisible] = useState(false);
   const [alarms, setAlarms] = useState<Alarm[]>([
@@ -72,6 +74,9 @@ const AlarmScreen = () => {
             width: 50,
             height: 50,
             marginRight: 15,
+          }}
+          onPress={() => {
+            navigation.navigate("createAlarmScreen" as never);
           }}
         >
           <SvgXml
