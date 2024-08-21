@@ -1,13 +1,26 @@
-import { View, Text, Pressable, ScrollView, Alert, Image } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  ScrollView,
+  Alert,
+  Image,
+  TextInput,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { SvgXml } from "react-native-svg";
 import DialogueBox from "../Components/DialogueBox";
-import { Alarm } from "../Constants";
+import { Alarm, mapStyle } from "../Constants";
 import MapView from "react-native-maps";
 import { Marker } from "react-native-maps";
 import { useState, useEffect } from "react";
 import * as Location from "expo-location";
+
 import loadingGif from "../assets/icons8-loading.gif";
+import userLocation from "../assets/icons8-user-location-64.png";
+import backButton from "../assets/icons8-back-50.png";
 
 const CreateAlarmScreen = () => {
   const [location, setLocation] = useState<Location.LocationObject | null>(
@@ -34,6 +47,7 @@ const CreateAlarmScreen = () => {
   }, []);
 
   if (location === null) {
+    // if (true) {
     return (
       <View
         style={{
@@ -43,7 +57,22 @@ const CreateAlarmScreen = () => {
           backgroundColor: "white",
         }}
       >
-        <Image source={loadingGif}></Image>
+        <Image
+          source={loadingGif}
+          style={{
+            width: 60,
+            height: 60,
+          }}
+        ></Image>
+        <Text
+          style={{
+            color: "black",
+            fontFamily: "montserrat",
+            fontSize: 11,
+          }}
+        >
+          Locating you...
+        </Text>
       </View>
     );
   }
@@ -58,167 +87,7 @@ const CreateAlarmScreen = () => {
   return (
     <View style={{ flex: 1, width: "100%" }}>
       <MapView
-        customMapStyle={[
-          {
-            elementType: "geometry",
-            stylers: [
-              {
-                color: "#242f3e",
-              },
-            ],
-          },
-          {
-            elementType: "labels.text.fill",
-            stylers: [
-              {
-                color: "#746855",
-              },
-            ],
-          },
-          {
-            elementType: "labels.text.stroke",
-            stylers: [
-              {
-                color: "#242f3e",
-              },
-            ],
-          },
-          {
-            featureType: "administrative.locality",
-            elementType: "labels.text.fill",
-            stylers: [
-              {
-                color: "#d59563",
-              },
-            ],
-          },
-          {
-            featureType: "poi",
-            elementType: "labels.text.fill",
-            stylers: [
-              {
-                color: "#d59563",
-              },
-            ],
-          },
-          {
-            featureType: "poi.park",
-            elementType: "geometry",
-            stylers: [
-              {
-                color: "#263c3f",
-              },
-            ],
-          },
-          {
-            featureType: "poi.park",
-            elementType: "labels.text.fill",
-            stylers: [
-              {
-                color: "#6b9a76",
-              },
-            ],
-          },
-          {
-            featureType: "road",
-            elementType: "geometry",
-            stylers: [
-              {
-                color: "#38414e",
-              },
-            ],
-          },
-          {
-            featureType: "road",
-            elementType: "geometry.stroke",
-            stylers: [
-              {
-                color: "#212a37",
-              },
-            ],
-          },
-          {
-            featureType: "road",
-            elementType: "labels.text.fill",
-            stylers: [
-              {
-                color: "#9ca5b3",
-              },
-            ],
-          },
-          {
-            featureType: "road.highway",
-            elementType: "geometry",
-            stylers: [
-              {
-                color: "#746855",
-              },
-            ],
-          },
-          {
-            featureType: "road.highway",
-            elementType: "geometry.stroke",
-            stylers: [
-              {
-                color: "#1f2835",
-              },
-            ],
-          },
-          {
-            featureType: "road.highway",
-            elementType: "labels.text.fill",
-            stylers: [
-              {
-                color: "#f3d19c",
-              },
-            ],
-          },
-          {
-            featureType: "transit",
-            elementType: "geometry",
-            stylers: [
-              {
-                color: "#2f3948",
-              },
-            ],
-          },
-          {
-            featureType: "transit.station",
-            elementType: "labels.text.fill",
-            stylers: [
-              {
-                color: "#d59563",
-              },
-            ],
-          },
-          {
-            featureType: "water",
-            elementType: "geometry",
-            stylers: [
-              {
-                color: "#17263c",
-              },
-            ],
-          },
-          {
-            featureType: "water",
-            elementType: "labels.text.fill",
-            stylers: [
-              {
-                color: "#515c6d",
-              },
-            ],
-          },
-          {
-            featureType: "water",
-            elementType: "labels.text.stroke",
-            stylers: [
-              {
-                color: "#17263c",
-              },
-            ],
-          },
-        ]}
+        customMapStyle={mapStyle}
         style={{ flex: 1, width: "100%", height: "100%" }}
         initialRegion={initialRegion}
         onRegionChange={(region) => {
@@ -244,12 +113,73 @@ const CreateAlarmScreen = () => {
             marginTop: 80,
             marginHorizontal: "auto",
             borderRadius: "50%",
+            display: "flex",
+            justifyContent: "space-between",
+            flexDirection: "row",
           }}
-        ></View>
+        >
+          <Pressable
+            style={{
+              width: "20%",
+              height: 50,
+              justifyContent: "center",
+              borderColor: "black",
+              borderWidth: 1,
+              display: "flex",
+              alignItems: "center",
+              backgroundColor: "red",
+            }}
+          >
+            <Image
+              source={backButton}
+              style={{
+                width: 35,
+                height: 35,
+                justifyContent: "center",
+              }}
+            ></Image>
+          </Pressable>
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <View
+                style={{
+                  width: "80%",
+                  height: 50,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderColor: "black",
+                }}
+              >
+                <TextInput
+                  placeholder="Enter Alarm Name lkjfdskl kljsdflfsl kjlk flkdslfs jljsdflk jjkldsf lkjdsflklkfjlk flkjflk dsflkllfklkklsd jl"
+                  style={{
+                    width: "100%",
+                    height: 50,
+                    fontSize: 20,
+                    fontFamily: "montserrat",
+                    borderColor: "black",
+                    borderWidth: 1,
+                    paddingLeft: 10,
+                  }}
+                />
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
         <Marker
-          image={{
-            uri: "https://img.icons8.com/?size=100&id=0sTmBjAQDKfi&format=png&color=000000",
+          style={{
+            width: 50,
+            height: 50,
+            justifyContent: "center",
+            alignItems: "center",
           }}
+          image={userLocation}
           draggable
           coordinate={location.coords}
           onDragEnd={(e) =>
@@ -257,86 +187,8 @@ const CreateAlarmScreen = () => {
               e.nativeEvent.coordinate as unknown as Location.LocationObject
             )
           }
-        >
-          <View
-            style={{
-              backgroundColor: "white",
-              padding: 10,
-              borderRadius: 5,
-            }}
-          >
-            <Text
-              style={{
-                fontFamily: "montserrat",
-                fontSize: 16,
-              }}
-            ></Text>
-          </View>
-        </Marker>
+        ></Marker>
       </MapView>
-
-      {/* Uncomment and use the below code if you need additional UI components */}
-      {/* 
-      <View
-        style={{
-          flex: 0.4 / 5,
-          justifyContent: "space-between",
-          flexDirection: "row",
-          alignItems: "center",
-        }}
-      >
-        <Text
-          style={{
-            fontSize: 32,
-            fontFamily: "montserrat",
-            marginLeft: 15,
-          }}
-        >
-          Create Alarm
-        </Text>
-        <Pressable
-          style={{
-            width: 50,
-            height: 50,
-            marginRight: 15,
-          }}
-          onPress={() => {
-            navigation.navigate("AlarmScreen" as never);
-          }}
-        >
-          <SvgXml
-            xml={`<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 256 256">
-              <g fill="#808080" fill-rule="nonzero">
-                <g transform="scale(5.12,5.12)">
-                  <path d="M21,3c-9.39844,0 -17,7.60156 -17,17c0,9.39844 7.60156,17 17,17c3.35547,0 6.46094,-0.98437 9.09375,-2.65625l12.28125,12.28125l4.25,-4.25l-12.125,-12.09375c2.17969,-2.85937 3.5,-6.40234 3.5,-10.28125c0,-9.39844 -7.60156,-17 -17,-17zM21,7c7.19922,0 13,5.80078 13,13c0,7.19922 -5.80078,13 -13,13c-7.19922,0 -13,-5.80078 -13,-13c0,-7.19922 5.80078,-13 13,-13z"></path>
-                </g>
-              </g>
-            </svg>`}
-          />
-        </Pressable>
-      </View>
-
-      <ScrollView
-        style={{
-          flex: 4 / 5,
-          width: "100%",
-          padding: 25,
-        }}
-      >
-        <DialogueBox
-          modalVisible={false}
-          setModalVisible={() => {}}
-          DialogueBoxInformation={
-            {
-              title: "Create Alarm",
-              description: "This is a description",
-              buttonText: "Create Alarm",
-              onPress: () => {},
-            } as unknown as Alarm
-          }
-        />
-      </ScrollView>
-      */}
     </View>
   );
 };
