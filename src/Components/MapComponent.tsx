@@ -1,5 +1,5 @@
 // MapComponent.js
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import MapView, { Marker } from "react-native-maps";
 import { View, Image, Text } from "react-native";
 import userLocation from "../assets/icons8-user-location-64.png";
@@ -23,8 +23,11 @@ const MapComponent = ({
   location,
   setLocation,
 }: MapComponentProps) => {
+  const [userMovedTheMap, setuserMovedTheMap] = useState(false);
   const selectedLocationContext = useContext(SelectedLocation);
   const { selectedLocation, setSelectedLocation } = selectedLocationContext;
+
+  const originalLocation = location.coords;
 
   return (
     <MapView
@@ -32,6 +35,7 @@ const MapComponent = ({
       style={{ flex: 1, width: "100%", height: "100%" }}
       initialRegion={initialRegion}
       onRegionChange={(region) => {
+        setuserMovedTheMap(true);
         setLocation({
           coords: {
             latitude: region.latitude,
@@ -62,6 +66,15 @@ const MapComponent = ({
           {/* Additional content or styling can be added here */}
         </View>
       </Marker>
+
+      {userMovedTheMap && (
+        <Marker coordinate={originalLocation}>
+          <View style={{ alignItems: "center" }}>
+            <Image source={userLocation} style={{ width: 35, height: 35 }} />
+            {/* Additional content or styling can be added here */}
+          </View>
+        </Marker>
+      )}
     </MapView>
   );
 };

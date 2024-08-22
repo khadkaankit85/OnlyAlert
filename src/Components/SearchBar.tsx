@@ -47,8 +47,8 @@ const SearchBar = () => {
 
       <TextInput
         placeholder={
-          selectedLocation && selectedLocation?.street != null
-            ? `${selectedLocation?.street}, ${selectedLocation?.city}`
+          selectedLocation && selectedLocation?.name != null
+            ? `${selectedLocation?.name}, ${selectedLocation?.city}`
             : ""
         }
         style={{
