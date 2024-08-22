@@ -4,6 +4,21 @@ export type Alarm= {
     location: string;
   }
 
+  export type LocationDetails = {
+    city: string;
+    country: string;
+    district: string;
+    isoCountryCode: string;
+    name: string;
+    postalCode: string;
+    region: string;
+    street: string;
+    streetNumber: string;
+    subregion: string;
+    timezone: string;
+  };
+  
+
   export const mapStyle = [
     {
       elementType: "geometry",
