@@ -6,7 +6,6 @@ import backButton from "../assets/icons8-back-50.png";
 import {
   SelectedLocationContext,
   CurrentUserLocationContext,
-  UserLocationContextType,
 } from "../Context";
 
 const SearchBar = () => {

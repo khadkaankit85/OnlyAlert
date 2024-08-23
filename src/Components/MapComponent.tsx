@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import MapView, { Marker, Region } from "react-native-maps";
 import { View, Image, Alert } from "react-native";
 import userLocationImg from "../assets/icons8-location-100.png";
@@ -29,7 +29,7 @@ const MapComponent = ({ initialRegion }: MapComponentProps) => {
   const { selectedLocation, setSelectedLocation } = selectedLocationContext;
   const { userLocation, setUserLocation } = userLocationContext;
 
-  const [showCenterMarker, setShowCenterMarker] = useState(true);
+  const [showCenterMarker, setShowCenterMarker] = useState(false);
   const [centerCoords, setCenterCoords] =
     useState<Location.LocationObjectCoords>({
       latitude: initialRegion.latitude,
@@ -40,6 +40,9 @@ const MapComponent = ({ initialRegion }: MapComponentProps) => {
       heading: 0,
       speed: 0,
     });
+
+  // ref for the timeout to get the readable address
+  const getReadableAddress = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -96,6 +99,7 @@ const MapComponent = ({ initialRegion }: MapComponentProps) => {
       speed: 0,
     };
     setCenterCoords(newCenterCoords);
+    console.log("before updatingh", selectedLocation);
 
     // Update selected location context based on new center
     setSelectedLocation({
@@ -106,6 +110,7 @@ const MapComponent = ({ initialRegion }: MapComponentProps) => {
       },
       readableAddress: selectedLocation?.readableAddress,
     });
+    console.log(selectedLocation);
 
     // Update the showCenterMarker state after updating selectedLocation
     if (userLocation?.mathematicalAddress) {
@@ -116,6 +121,25 @@ const MapComponent = ({ initialRegion }: MapComponentProps) => {
       console.log("distance is ", distance);
       setShowCenterMarker(distance >= 50);
     }
+
+    //time to update the readable address
+    if (getReadableAddress.current) {
+      clearTimeout(getReadableAddress.current);
+    }
+    getReadableAddress.current = setTimeout(() => {
+      (async () => {
+        let address = await Location.reverseGeocodeAsync({
+          latitude: newCenterCoords.latitude,
+          longitude: newCenterCoords.longitude,
+        });
+        if (address) {
+          setSelectedLocation({
+            ...selectedLocation,
+            readableAddress: address[0],
+          });
+        }
+      })();
+    }, 2000);
   };
 
   return (

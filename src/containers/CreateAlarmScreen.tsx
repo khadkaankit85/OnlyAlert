@@ -10,6 +10,7 @@ import {
   UserLocationContextType,
   CurrentUserLocationContext,
 } from "../Context";
+import { SelectedLocationContextType } from "../Constants";
 
 const CreateAlarmScreen = () => {
   const { userLocation, setUserLocation } = useContext<UserLocationContextType>(
@@ -25,11 +26,18 @@ const CreateAlarmScreen = () => {
     longitudeDelta: 0.0028689858730075457,
   };
 
+  // state initializor for selectedlocation
+  const [selectedLocation, setselectedLocation] =
+    useState<DetailedUserLocationType>({
+      readableAddress: undefined,
+      mathematicalAddress: undefined,
+    });
+
   return (
     <SelectedLocationContext.Provider
       value={{
-        selectedLocation: null,
-        setSelectedLocation: () => {},
+        selectedLocation: selectedLocation,
+        setSelectedLocation: setselectedLocation,
       }}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
