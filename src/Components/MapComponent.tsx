@@ -1,7 +1,8 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import MapView, { Marker, Region } from "react-native-maps";
 import { View, Image, Alert } from "react-native";
-import userLocationImg from "../assets/icons8-user-location-64.png";
+import userLocationImg from "../assets/icons8-location-100.png";
+import centerMarkerImg from "../assets/icons8-user-location-64.png";
 import { mapStyle } from "../Constants";
 import {
   SelectedLocationContext,
@@ -10,7 +11,6 @@ import {
 } from "../Context";
 import * as Location from "expo-location";
 import { calculateTheDistanceBetweenTwoCoordinates } from "../Utils";
-import { LocationObject } from "expo-location";
 
 interface MapComponentProps {
   initialRegion: {
@@ -25,40 +25,44 @@ const MapComponent = ({ initialRegion }: MapComponentProps) => {
   const userLocationContext = useContext<UserLocationContextType>(
     CurrentUserLocationContext
   );
-  // Selected location part, used to set the alarm
   const selectedLocationContext = useContext(SelectedLocationContext);
   const { selectedLocation, setSelectedLocation } = selectedLocationContext;
-  const [twoPointsAreClose, settwoPointsAreClose] = useState(true);
-
   const { userLocation, setUserLocation } = userLocationContext;
 
+  const [showCenterMarker, setShowCenterMarker] = useState(true);
+  const [centerCoords, setCenterCoords] =
+    useState<Location.LocationObjectCoords>({
+      latitude: initialRegion.latitude,
+      longitude: initialRegion.longitude,
+      altitude: 0,
+      accuracy: 0,
+      altitudeAccuracy: 0,
+      heading: 0,
+      speed: 0,
+    });
+
   useEffect(() => {
-    if (userLocation?.mathematicalAddress === undefined) {
-      (async () => {
-        let { status } = await Location.getForegroundPermissionsAsync();
-        if (status !== "granted") {
-          Alert.alert("Permission to access location was not granted");
-          return;
-        }
-        if (status === "granted") {
-          let location = await Location.getCurrentPositionAsync({
-            accuracy: Location.Accuracy.High,
-          });
-          // Reverse geocode the location
-          let address = await Location.reverseGeocodeAsync({
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-          });
-          if (address) {
-            setUserLocation({
-              readableAddress: address[0],
-              mathematicalAddress: location,
-            });
-          }
-        }
-      })();
-    }
-  }, [setUserLocation, userLocation?.mathematicalAddress]);
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permission to access location was not granted");
+        return;
+      }
+      let location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+      });
+      let address = await Location.reverseGeocodeAsync({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+      if (address) {
+        setUserLocation({
+          readableAddress: address[0],
+          mathematicalAddress: location,
+        });
+      }
+    })();
+  }, [setUserLocation]);
 
   useEffect(() => {
     if (
@@ -67,106 +71,89 @@ const MapComponent = ({ initialRegion }: MapComponentProps) => {
     ) {
       let distance = calculateTheDistanceBetweenTwoCoordinates(
         userLocation?.mathematicalAddress?.coords,
-        selectedLocation?.mathematicalAddress?.coords
+        centerCoords
       );
-      if (distance < 500) {
-        settwoPointsAreClose(true);
-      } else {
-        settwoPointsAreClose(false);
-      }
-    } else {
-      settwoPointsAreClose(false);
+      console.log("distance is ", distance);
+      setShowCenterMarker(distance >= 50);
     }
-  }, [selectedLocation, userLocation]);
+  }, [
+    selectedLocation?.mathematicalAddress,
+    userLocation?.mathematicalAddress,
+    centerCoords,
+  ]);
 
-  const reverseGeoCodeHandler = useRef<NodeJS.Timeout | null>(null);
+  const handleMapChange = (region: Region) => {
+    console.log("region changed", region);
 
-  function handleMapChange(region: Region) {
-    if (reverseGeoCodeHandler.current) {
-      clearTimeout(reverseGeoCodeHandler.current);
-    }
-    // When the user moves the map, the selected location is updated
+    // Update the center coordinates based on the new region center
+    const newCenterCoords: Location.LocationObjectCoords = {
+      latitude: region.latitude,
+      longitude: region.longitude,
+      altitude: 0,
+      accuracy: 0,
+      altitudeAccuracy: 0,
+      heading: 0,
+      speed: 0,
+    };
+    setCenterCoords(newCenterCoords);
+
+    // Update selected location context based on new center
     setSelectedLocation({
       ...selectedLocation,
       mathematicalAddress: {
-        coords: {
-          latitude: region.latitude,
-          longitude: region.longitude,
-          altitude: 0,
-          accuracy: 0,
-          altitudeAccuracy: 0,
-          heading: 0,
-          speed: 0,
-        },
+        coords: newCenterCoords,
         timestamp: Date.now(),
       },
+      readableAddress: selectedLocation?.readableAddress,
     });
-    reverseGeoCodeHandler.current = setTimeout(async () => {
-      // Reverse geocode the location only if the user has stopped moving the map
-      if (userLocation?.mathematicalAddress !== undefined) {
-        let address = await Location.reverseGeocodeAsync({
-          latitude: userLocation?.mathematicalAddress.coords.latitude,
-          longitude: userLocation?.mathematicalAddress.coords.longitude,
-        });
-        if (address) {
-          setUserLocation({
-            readableAddress: address[0],
-            mathematicalAddress: userLocation?.mathematicalAddress,
-          });
-        }
-      }
-    }, 2000);
-  }
+
+    // Update the showCenterMarker state after updating selectedLocation
+    if (userLocation?.mathematicalAddress) {
+      let distance = calculateTheDistanceBetweenTwoCoordinates(
+        userLocation.mathematicalAddress.coords,
+        newCenterCoords
+      );
+      console.log("distance is ", distance);
+      setShowCenterMarker(distance >= 50);
+    }
+  };
 
   return (
-    <MapView
-      customMapStyle={mapStyle}
-      style={{ flex: 1, width: "100%", height: "100%" }}
-      initialRegion={initialRegion}
-      onRegionChangeComplete={(region) => {
-        handleMapChange(region); // Use `onRegionChangeComplete`
-      }}
-    >
-      <Marker
-        coordinate={{
-          latitude: userLocation?.mathematicalAddress?.coords.latitude || 0,
-          longitude: userLocation?.mathematicalAddress?.coords.longitude || 0,
-        }}
-        draggable
-        onDragEnd={(e) => {
-          const { latitude, longitude } = e.nativeEvent.coordinate;
-          setSelectedLocation({
-            ...selectedLocation,
-            mathematicalAddress: {
-              coords: {
-                latitude,
-                longitude,
-                altitude: 0,
-                accuracy: 0,
-                altitudeAccuracy: 0,
-                heading: 0,
-                speed: 0,
-              },
-              timestamp: Date.now(),
-            },
-          });
-        }}
-        image={userLocationImg} // Use the imported image instead of URI
-      />
-      {selectedLocation?.mathematicalAddress && (
-        <Marker
-          draggable={false}
-          coordinate={{
-            latitude: selectedLocation.mathematicalAddress.coords.latitude,
-            longitude: selectedLocation.mathematicalAddress.coords.longitude,
+    <View style={{ flex: 1 }}>
+      <MapView
+        customMapStyle={mapStyle}
+        style={{ flex: 1, width: "100%", height: "100%" }}
+        initialRegion={initialRegion}
+        onRegionChangeComplete={handleMapChange}
+      >
+        {/* User Location Marker */}
+        {userLocation?.mathematicalAddress && (
+          <Marker
+            coordinate={{
+              latitude: userLocation.mathematicalAddress.coords.latitude,
+              longitude: userLocation.mathematicalAddress.coords.longitude,
+            }}
+            image={userLocationImg}
+          />
+        )}
+      </MapView>
+
+      {/* Center Marker */}
+      {showCenterMarker && (
+        <View
+          pointerEvents="none"
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            marginLeft: -15, // Adjust based on your marker size
+            marginTop: -30, // Adjust based on your marker size
           }}
         >
-          <View style={{ alignItems: "center", backgroundColor: "red" }}>
-            <Image source={userLocationImg} style={{ width: 35, height: 35 }} />
-          </View>
-        </Marker>
+          <Image source={centerMarkerImg} style={{ width: 30, height: 30 }} />
+        </View>
       )}
-    </MapView>
+    </View>
   );
 };
 

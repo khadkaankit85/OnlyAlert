@@ -15,11 +15,9 @@ const CreateAlarmScreen = () => {
   const { userLocation, setUserLocation } = useContext<UserLocationContextType>(
     CurrentUserLocationContext
   );
-  console.log(userLocation?.mathematicalAddress);
   if (userLocation?.mathematicalAddress === undefined) {
     return <LoadingScreen />;
   }
-
   const initialRegion = {
     latitude: userLocation.mathematicalAddress.coords.latitude,
     longitude: userLocation.mathematicalAddress.coords.longitude,

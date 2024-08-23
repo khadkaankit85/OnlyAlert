@@ -3,14 +3,22 @@ import { useContext } from "react";
 import { View, TextInput, Pressable, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import backButton from "../assets/icons8-back-50.png";
-import { SelectedLocationContext } from "../Context";
+import {
+  SelectedLocationContext,
+  CurrentUserLocationContext,
+  UserLocationContextType,
+} from "../Context";
 
 const SearchBar = () => {
   const navigation = useNavigation();
 
-  const selectedLocationContext = useContext(SelectedLocationContext);
-  const { selectedLocation, setSelectedLocation } = selectedLocationContext;
-
+  const { selectedLocation, setSelectedLocation } = useContext(
+    SelectedLocationContext
+  );
+  console.log(selectedLocation);
+  const { userLocation, setUserLocation } = useContext(
+    CurrentUserLocationContext
+  );
   return (
     <View
       style={{
@@ -52,7 +60,11 @@ const SearchBar = () => {
           selectedLocation.readableAddress?.street &&
           selectedLocation.readableAddress.city
             ? `${selectedLocation?.readableAddress.streetNumber}, ${selectedLocation?.readableAddress.street}, ${selectedLocation?.readableAddress.city}`
-            : ""
+            : userLocation?.readableAddress?.streetNumber &&
+              userLocation?.readableAddress?.street &&
+              userLocation?.readableAddress?.city
+            ? `${userLocation?.readableAddress.streetNumber}, ${userLocation?.readableAddress.street}, ${userLocation?.readableAddress.city}`
+            : "Search for a location"
         }
         style={{
           flex: 1,
