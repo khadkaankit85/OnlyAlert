@@ -3,6 +3,10 @@ export type Alarm= {
     distance: number;
     location: string;
   }
+export  type SelectedLocationContextType = {
+    selectedLocation: LocationDetails | null;
+    setSelectedLocation: (location: LocationDetails) => void;
+  };
 
   export type LocationDetails = {
     city: string;

@@ -1,87 +1,46 @@
-// CreateAlarmScreen.js
-import React, { useState, useEffect, createContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { View, Alert, TouchableWithoutFeedback, Keyboard } from "react-native";
 import * as Location from "expo-location";
 import LoadingScreen from "../Components/LoadingScreen";
 import MapComponent from "../Components/MapComponent";
 import OverlayComponent from "../Components/SearchBar";
-import { LocationObject } from "expo-location";
-import { LocationDetails } from "../Constants";
-
-type SelectedLocationContextType = {
-  selectedLocation: LocationDetails | null;
-  setSelectedLocation: (location: LocationDetails) => void;
-};
-
-export const SelectedLocation = createContext<SelectedLocationContextType>({
-  selectedLocation: null,
-  setSelectedLocation: () => {},
-});
+import {
+  SelectedLocationContext,
+  DetailedUserLocationType,
+  UserLocationContextType,
+  CurrentUserLocationContext,
+} from "../Context";
 
 const CreateAlarmScreen = () => {
-  const [location, setLocation] = useState<Location.LocationObject | null>(
-    null
+  const { userLocation, setUserLocation } = useContext<UserLocationContextType>(
+    CurrentUserLocationContext
   );
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [selectedLocation, setselectedLocation] =
-    useState<LocationDetails | null>(null);
-
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
-
-      try {
-        let location = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.BestForNavigation,
-        });
-        setLocation(location);
-        let address = await Location.reverseGeocodeAsync({
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-        });
-        if (address) {
-          setselectedLocation(address[0] as LocationDetails);
-        }
-      } catch (error) {
-        setErrorMsg("Error getting location");
-        Alert.alert("Error", errorMsg as string);
-      }
-    })();
-  }, []);
-
-  if (location === null) {
+  console.log(userLocation?.mathematicalAddress);
+  if (userLocation?.mathematicalAddress === undefined) {
     return <LoadingScreen />;
   }
 
   const initialRegion = {
-    latitude: location.coords.latitude,
-    longitude: location.coords.longitude,
-    latitudeDelta: 0.0922, // Controls the zoom level (increase to zoom out)
-    longitudeDelta: 0.0421,
+    latitude: userLocation.mathematicalAddress.coords.latitude,
+    longitude: userLocation.mathematicalAddress.coords.longitude,
+    latitudeDelta: 0.002612860232268588,
+    longitudeDelta: 0.0028689858730075457,
   };
 
   return (
-    <SelectedLocation.Provider
+    <SelectedLocationContext.Provider
       value={{
-        selectedLocation: selectedLocation,
-        setSelectedLocation: setselectedLocation,
+        selectedLocation: null,
+        setSelectedLocation: () => {},
       }}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={{ flex: 1, width: "100%" }}>
-          <MapComponent
-            initialRegion={initialRegion}
-            location={location}
-            setLocation={setLocation}
-          />
+          <MapComponent initialRegion={initialRegion} />
           <OverlayComponent />
         </View>
       </TouchableWithoutFeedback>
-    </SelectedLocation.Provider>
+    </SelectedLocationContext.Provider>
   );
 };
 

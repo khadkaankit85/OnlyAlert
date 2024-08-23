@@ -1,12 +1,22 @@
-import { View, Text, Image, ScrollView, Pressable } from "react-native";
+import { View, Text, Image, ScrollView, Pressable, Alert } from "react-native";
 import { SvgXml } from "react-native-svg";
 import AlarmCard from "../Components/AlarmCard";
 import DialogueBox from "../Components/DialogueBox";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Alarm } from "../Constants";
 import { useNavigation } from "@react-navigation/native";
+import * as Location from "expo-location";
 
 const AlarmScreen = () => {
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permission to access location was denied");
+        return;
+      }
+    })();
+  }, []);
   const navigation = useNavigation();
   const [DialogueBoxInformation, setDialogueBoxInformation] = useState<Alarm>();
   const [modalVisible, setModalVisible] = useState(false);

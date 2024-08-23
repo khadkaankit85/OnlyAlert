@@ -3,12 +3,12 @@ import { useContext } from "react";
 import { View, TextInput, Pressable, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import backButton from "../assets/icons8-back-50.png";
-import { SelectedLocation } from "../containers/CreateAlarmScreen";
+import { SelectedLocationContext } from "../Context";
 
 const SearchBar = () => {
   const navigation = useNavigation();
 
-  const selectedLocationContext = useContext(SelectedLocation);
+  const selectedLocationContext = useContext(SelectedLocationContext);
   const { selectedLocation, setSelectedLocation } = selectedLocationContext;
 
   return (
@@ -47,8 +47,11 @@ const SearchBar = () => {
 
       <TextInput
         placeholder={
-          selectedLocation && selectedLocation?.name != null
-            ? `${selectedLocation?.name}, ${selectedLocation?.city}`
+          selectedLocation &&
+          selectedLocation.readableAddress?.streetNumber &&
+          selectedLocation.readableAddress?.street &&
+          selectedLocation.readableAddress.city
+            ? `${selectedLocation?.readableAddress.streetNumber}, ${selectedLocation?.readableAddress.street}, ${selectedLocation?.readableAddress.city}`
             : ""
         }
         style={{
