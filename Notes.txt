@@ -1,0 +1,3 @@
+next thing to do: create create alarm component
+and then implement add alarm functionality and then implement delete alarm functionality
+and then make the alarm ring , get the user location in the background dunn how

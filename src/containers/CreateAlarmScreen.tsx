@@ -16,6 +16,12 @@ const CreateAlarmScreen = () => {
   const { userLocation, setUserLocation } = useContext<UserLocationContextType>(
     CurrentUserLocationContext
   );
+  // state initializor for selectedlocation
+  const [selectedLocation, setselectedLocation] =
+    useState<DetailedUserLocationType>({
+      readableAddress: undefined,
+      mathematicalAddress: undefined,
+    });
   if (userLocation?.mathematicalAddress === undefined) {
     return <LoadingScreen />;
   }
@@ -25,13 +31,6 @@ const CreateAlarmScreen = () => {
     latitudeDelta: 0.002612860232268588,
     longitudeDelta: 0.0028689858730075457,
   };
-
-  // state initializor for selectedlocation
-  const [selectedLocation, setselectedLocation] =
-    useState<DetailedUserLocationType>({
-      readableAddress: undefined,
-      mathematicalAddress: undefined,
-    });
 
   return (
     <SelectedLocationContext.Provider

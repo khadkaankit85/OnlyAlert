@@ -14,7 +14,7 @@ const SearchBar = () => {
   const { selectedLocation, setSelectedLocation } = useContext(
     SelectedLocationContext
   );
-  console.log(selectedLocation);
+  console.log("from search bar", selectedLocation);
   const { userLocation, setUserLocation } = useContext(
     CurrentUserLocationContext
   );

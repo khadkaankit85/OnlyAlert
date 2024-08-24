@@ -13,25 +13,26 @@ const SplashScreen = () => {
   );
   // since this is the main screen, we are gonna fetch the user location here if we have the permission to fetch it
   // we are gonna fetch the user location here and cache it
-  useEffect(() => {
-    async () => {
-      let { status } = await Location.getForegroundPermissionsAsync();
-      if (status !== "granted") {
-        console.log("Permission to access location was not granted");
-        return;
-      }
-      if (status === "granted") {
-        let location = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.High,
-        });
-        setUserLocation({
-          readableAddress: undefined,
-          mathematicalAddress: location,
-        });
-        console.log("This is from splash screen", location);
-      }
-    };
-  }, []);
+  // if taken cared carefully, we might be able to get the location of the user even in the splash screen
+  // useEffect(() => {
+  //   async () => {
+  //     let { status } = await Location.getForegroundPermissionsAsync();
+  //     if (status !== "granted") {
+  //       console.log("Permission to access location was not granted");
+  //       return;
+  //     }
+  //     if (status === "granted") {
+  //       let location = await Location.getCurrentPositionAsync({
+  //         accuracy: Location.Accuracy.High,
+  //       });
+  //       setUserLocation({
+  //         readableAddress: undefined,
+  //         mathematicalAddress: location,
+  //       });
+  //       console.log("This is from splash screen", location);
+  //     }
+  //   };
+  // }, []);
 
   return (
     <View

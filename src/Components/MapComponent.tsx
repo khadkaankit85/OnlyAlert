@@ -44,50 +44,48 @@ const MapComponent = ({ initialRegion }: MapComponentProps) => {
   // ref for the timeout to get the readable address
   const getReadableAddress = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert("Permission to access location was not granted");
-        return;
-      }
-      let location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High,
-      });
-      let address = await Location.reverseGeocodeAsync({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      });
-      if (address) {
-        setUserLocation({
-          readableAddress: address[0],
-          mathematicalAddress: location,
-        });
-      }
-    })();
-  }, [setUserLocation]);
+  // useEffect(() => {
+  //   (async () => {
+  //     let { status } = await Location.requestForegroundPermissionsAsync();
+  //     if (status !== "granted") {
+  //       Alert.alert("Permission to access location was not granted");
+  //       return;
+  //     }
+  //     let location = await Location.getCurrentPositionAsync({
+  //       accuracy: Location.Accuracy.High,
+  //     });
+  //     let address = await Location.reverseGeocodeAsync({
+  //       latitude: location.coords.latitude,
+  //       longitude: location.coords.longitude,
+  //     });
+  //     if (address) {
+  //       setUserLocation({
+  //         readableAddress: address[0],
+  //         mathematicalAddress: location,
+  //       });
+  //     }
+  //   })();
+  // }, [setUserLocation]);
 
-  useEffect(() => {
-    if (
-      selectedLocation?.mathematicalAddress &&
-      userLocation?.mathematicalAddress
-    ) {
-      let distance = calculateTheDistanceBetweenTwoCoordinates(
-        userLocation?.mathematicalAddress?.coords,
-        centerCoords
-      );
-      console.log("distance is ", distance);
-      setShowCenterMarker(distance >= 50);
-    }
-  }, [
-    selectedLocation?.mathematicalAddress,
-    userLocation?.mathematicalAddress,
-    centerCoords,
-  ]);
+  // useEffect(() => {
+  //   if (
+  //     selectedLocation?.mathematicalAddress &&
+  //     userLocation?.mathematicalAddress
+  //   ) {
+  //     let distance = calculateTheDistanceBetweenTwoCoordinates(
+  //       userLocation?.mathematicalAddress?.coords,
+  //       centerCoords
+  //     );
+  //     console.log("distance is ", distance);
+  //     setShowCenterMarker(distance >= 50);
+  //   }
+  // }, [
+  //   selectedLocation?.mathematicalAddress,
+  //   userLocation?.mathematicalAddress,
+  //   centerCoords,
+  // ]);
 
   const handleMapChange = (region: Region) => {
-    console.log("region changed", region);
-
     // Update the center coordinates based on the new region center
     const newCenterCoords: Location.LocationObjectCoords = {
       latitude: region.latitude,
@@ -99,18 +97,15 @@ const MapComponent = ({ initialRegion }: MapComponentProps) => {
       speed: 0,
     };
     setCenterCoords(newCenterCoords);
-    console.log("before updatingh", selectedLocation);
 
     // Update selected location context based on new center
-    setSelectedLocation({
-      ...selectedLocation,
+    setSelectedLocation((prevLocation) => ({
       mathematicalAddress: {
         coords: newCenterCoords,
-        timestamp: Date.now(),
+        timestamp: 0, // If you want to store the current timestamp, you can use Date.now(),
       },
-      readableAddress: selectedLocation?.readableAddress,
-    });
-    console.log(selectedLocation);
+      readableAddress: prevLocation?.readableAddress ?? undefined, // Ensuring the type is either LocationGeocodedAddress or undefined
+    }));
 
     // Update the showCenterMarker state after updating selectedLocation
     if (userLocation?.mathematicalAddress) {
@@ -133,10 +128,12 @@ const MapComponent = ({ initialRegion }: MapComponentProps) => {
           longitude: newCenterCoords.longitude,
         });
         if (address) {
-          setSelectedLocation({
-            ...selectedLocation,
-            readableAddress: address[0],
-          });
+          if (address && address.length > 0) {
+            setSelectedLocation((prevLocation) => ({
+              ...prevLocation,
+              readableAddress: address[0],
+            }));
+          }
         }
       })();
     }, 2000);
@@ -148,7 +145,9 @@ const MapComponent = ({ initialRegion }: MapComponentProps) => {
         customMapStyle={mapStyle}
         style={{ flex: 1, width: "100%", height: "100%" }}
         initialRegion={initialRegion}
-        onRegionChangeComplete={handleMapChange}
+        onRegionChangeComplete={(e) => {
+          handleMapChange(e);
+        }}
       >
         {/* User Location Marker */}
         {userLocation?.mathematicalAddress && (
