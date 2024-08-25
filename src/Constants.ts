@@ -1,7 +1,9 @@
 export type Alarm= {
-    status: boolean;
     distance: number;
     location: string;
+    status: "on" | "off";
+    id: number;
+
   }
 export  type SelectedLocationContextType = {
     selectedLocation: LocationDetails | null;

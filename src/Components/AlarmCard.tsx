@@ -1,6 +1,7 @@
 import { View, Image, Text, Pressable, Animated } from "react-native";
 import { useState, useRef } from "react";
 import { Alarm } from "../Constants";
+import { Switch } from "react-native-paper";
 
 interface AlarmCardProps {
   onAlarmSet: (alarm: Alarm) => void;
@@ -153,30 +154,14 @@ const Components = ({
               </Animated.View>
             </Pressable>
 
-            <Pressable
-              onPress={() => {
-                onAlarmSet(alarm);
-              }}
-              style={{
-                width: 70,
-                height: 30,
-                marginRight: 20,
-                backgroundColor: "#000080",
-                borderRadius: 20,
-                justifyContent: "center",
-              }}
-            >
-              <Text
-                style={{
-                  color: "white",
-                  textAlign: "center",
-                  fontFamily: "ubuntu",
-                  fontSize: 18,
+            <View>
+              <Switch
+                value={alarm.status === "off"}
+                onValueChange={(value) => {
+                  console.log("alarm turned on");
                 }}
-              >
-                Set
-              </Text>
-            </Pressable>
+              />
+            </View>
           </View>
         </View>
       </View>
