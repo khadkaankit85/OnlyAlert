@@ -22,14 +22,16 @@ const AlarmScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [alarms, setAlarms] = useState<Alarm[]>([
     {
-      status: true,
+      status: "on",
       distance: 5,
       location: "Home",
+      id: 0,
     },
     {
-      status: false,
+      status: "off",
       distance: 10,
       location: "Work",
+      id: 1,
     },
   ]);
 

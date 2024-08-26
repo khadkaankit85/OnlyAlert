@@ -7,7 +7,7 @@ const DrawnButton = () => {
     // Start the rubber-like animation when the component is mounted
     Animated.spring(scaleAnim, {
       toValue: 1.4, // The scale value you want to achieve (twice the original size)
-      friction: 1, // Controls the bounciness (lower values are bouncier)
+      friction: 5, // Controls the bounciness (lower values are bouncier)
       tension: 100, // Controls the stiffness of the spring (higher values are stiffer)
       useNativeDriver: true,
     }).start(() => {

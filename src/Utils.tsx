@@ -1,4 +1,6 @@
 import { LocationObjectCoords } from "expo-location";
+import * as Location from "expo-location";
+
 export function calculateTheDistanceBetweenTwoCoordinates(
   location1: LocationObjectCoords | undefined,
   location2: LocationObjectCoords | undefined
@@ -19,4 +21,11 @@ export function calculateTheDistanceBetweenTwoCoordinates(
 
   const d = R * c; // in metres
   return d;
+}
+
+export function reverseGeocodeAsync(location: LocationObjectCoords) {
+  return Location.reverseGeocodeAsync({
+    latitude: location.latitude,
+    longitude: location.longitude,
+  });
 }
