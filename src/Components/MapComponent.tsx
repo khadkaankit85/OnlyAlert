@@ -163,9 +163,12 @@ const MapComponent = ({ initialRegion }: MapComponentProps) => {
           />
         )}
       </MapView>
-      {selectedLocation?.readableAddress?.city && (
+      {selectedLocation?.readableAddress?.city ||
+      selectedLocation?.readableAddress?.street ||
+      selectedLocation?.readableAddress?.name ? (
         <CreateAlarmCard distance={distance} />
-      )}
+      ) : null}
+
       {/* Center Marker */}
       {showCenterMarker && (
         <View

@@ -37,7 +37,41 @@ const CreateAlarmCard = ({ distance }: CreateAlarmCardProps) => {
       pan.flattenOffset(); // Ensure the offset is applied to the position
     }
   };
-  console.log(pan.getLayout().left);
+  //to get the most readable and informative address
+  const address =
+    selectedLocation?.readableAddress?.streetNumber &&
+    selectedLocation?.readableAddress?.street &&
+    selectedLocation?.readableAddress?.city
+      ? `${selectedLocation.readableAddress.streetNumber} ${selectedLocation.readableAddress.street}, ${selectedLocation.readableAddress.city}`
+      : selectedLocation?.readableAddress?.name &&
+        selectedLocation?.readableAddress?.city
+      ? `${selectedLocation.readableAddress.name}, ${selectedLocation.readableAddress.city}`
+      : selectedLocation?.readableAddress?.name &&
+        selectedLocation?.readableAddress?.region
+      ? `${selectedLocation.readableAddress.name}, ${selectedLocation.readableAddress.region}`
+      : selectedLocation?.readableAddress?.street &&
+        selectedLocation?.readableAddress?.city
+      ? `${selectedLocation.readableAddress.street}, ${selectedLocation.readableAddress.city}`
+      : selectedLocation?.readableAddress?.city &&
+        selectedLocation?.readableAddress?.region
+      ? `${selectedLocation.readableAddress.city}, ${selectedLocation.readableAddress.region}`
+      : selectedLocation?.readableAddress?.district &&
+        selectedLocation?.readableAddress?.city
+      ? `${selectedLocation.readableAddress.district}, ${selectedLocation.readableAddress.city}`
+      : selectedLocation?.readableAddress?.city &&
+        selectedLocation?.readableAddress?.country
+      ? `${selectedLocation.readableAddress.city}, ${selectedLocation.readableAddress.country}`
+      : selectedLocation?.readableAddress?.formattedAddress
+      ? selectedLocation.readableAddress.formattedAddress
+      : selectedLocation?.readableAddress?.name
+      ? selectedLocation.readableAddress.name
+      : selectedLocation?.readableAddress?.city
+      ? selectedLocation.readableAddress.city
+      : selectedLocation?.readableAddress?.region
+      ? selectedLocation.readableAddress.region
+      : selectedLocation?.readableAddress?.country
+      ? selectedLocation.readableAddress.country
+      : "Location not available";
 
   return (
     <PanGestureHandler
@@ -70,12 +104,7 @@ const CreateAlarmCard = ({ distance }: CreateAlarmCardProps) => {
               </Text>
             </View>
             <View style={styles.textContainer}>
-              <Text style={styles.largeText}>
-                {selectedLocation?.readableAddress?.streetNumber}{" "}
-                {selectedLocation?.readableAddress?.street}
-                {", "}
-                {selectedLocation?.readableAddress?.city}
-              </Text>
+              <Text style={styles.largeText}>{address}</Text>
             </View>
           </View>
           <View style={styles.notImageViewSecondChild}>
