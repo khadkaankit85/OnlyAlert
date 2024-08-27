@@ -1,5 +1,21 @@
 import React, { createContext, Dispatch, SetStateAction } from "react";
 import { LocationGeocodedAddress, LocationObject } from "expo-location";
+import { Alarm } from "./Constants";
+
+// type for readable address
+export type LocationDetails = {
+  city: string;
+  country: string;
+  district: string;
+  isoCountryCode: string;
+  name: string;
+  postalCode: string;
+  region: string;
+  street: string;
+  streetNumber: string;
+  subregion: string;
+  timezone: string;
+};
 
 //this is the type for detailed userlocation, for selected location and users's current location
 export type DetailedUserLocationType = {
@@ -31,17 +47,11 @@ export const CurrentUserLocationContext =
     setUserLocation: () => {},
   });
 
-// type for readable address
-export type LocationDetails = {
-  city: string;
-  country: string;
-  district: string;
-  isoCountryCode: string;
-  name: string;
-  postalCode: string;
-  region: string;
-  street: string;
-  streetNumber: string;
-  subregion: string;
-  timezone: string;
+export type SavedAlarmsContextType = {
+  alarms: Alarm[];
+  setAlarms: Dispatch<SetStateAction<Alarm[]>>;
 };
+export const SavedAlarmsContext = createContext<SavedAlarmsContextType>({
+  alarms: [],
+  setAlarms: () => {},
+});

@@ -1,12 +1,13 @@
 import { LocationObjectCoords } from "expo-location";
 import * as Location from "expo-location";
+import { Alarm } from "./Constants";
 
 export function calculateTheDistanceBetweenTwoCoordinates(
   location1: LocationObjectCoords | undefined,
   location2: LocationObjectCoords | undefined
 ): number {
   if (!location1 || !location2) {
-    return 0;
+    return -1;
   }
   const R = 6371e3; // metres
   const φ1 = (location1.latitude * Math.PI) / 180; // φ, λ in radians

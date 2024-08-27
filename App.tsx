@@ -1,13 +1,13 @@
 import { StyleSheet, View, Alert } from "react-native";
 import SplashScreen from "./src/containers/SplashScreen";
-import { useState, useEffect } from "react";
+import { useState, useEffect, createContext } from "react";
 import { useFonts } from "expo-font";
 import * as Location from "expo-location";
-
+import { Alarm } from "./src/Constants";
 import {
   CurrentUserLocationContext,
   DetailedUserLocationType,
-  LocationDetails,
+  SavedAlarmsContext,
 } from "./src/Context";
 import Main from "./src/containers/Main";
 
@@ -22,6 +22,24 @@ export default function App() {
     readableAddress: undefined,
     mathematicalAddress: undefined,
   });
+  // this component provides the app with alarms and set alarm logic
+  // context for alarm goes here
+
+  // initializing alarms with a dummy data for now
+  const [alarms, setAlarms] = useState<Alarm[]>([
+    {
+      status: "on",
+      distance: 5,
+      location: "8 tansley avenue",
+      id: 0,
+    },
+    {
+      status: "off",
+      distance: 10,
+      location: "Work",
+      id: 1,
+    },
+  ]);
 
   useEffect(() => {
     (async () => {
@@ -68,14 +86,21 @@ export default function App() {
   }
 
   return (
-    <CurrentUserLocationContext.Provider
+    <SavedAlarmsContext.Provider
       value={{
-        userLocation: userLocation,
-        setUserLocation: setuserLocation,
+        alarms: alarms,
+        setAlarms: setAlarms,
       }}
     >
-      <Main />
-    </CurrentUserLocationContext.Provider>
+      <CurrentUserLocationContext.Provider
+        value={{
+          userLocation: userLocation,
+          setUserLocation: setuserLocation,
+        }}
+      >
+        <Main />
+      </CurrentUserLocationContext.Provider>
+    </SavedAlarmsContext.Provider>
   );
 }
 

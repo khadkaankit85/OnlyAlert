@@ -60,7 +60,6 @@ const Components = ({
       duration: 100,
       useNativeDriver: true,
     }).start();
-    console.log(animateDeleteButton);
   };
 
   const swipeToHideDeleteButton = () => {
@@ -81,12 +80,10 @@ const Components = ({
         justifyContent: "space-between",
       }}
       onSwipeLeft={() => {
-        console.log("swipe left");
         setIsDeleteButtonVisible(true);
         swipeToShowDeleteButton();
       }}
       onSwipeRight={() => {
-        console.log("swipe right");
         setIsDeleteButtonVisible(false);
         swipeToHideDeleteButton();
       }}
@@ -176,7 +173,6 @@ const Components = ({
                 onPressIn={handlePressIn}
                 onPressOut={handlePressOut}
                 onPress={() => {
-                  console.log("Pressed");
                   onDistanceChange(alarm);
                 }}
               >
@@ -230,11 +226,14 @@ const Components = ({
             justifyContent: "center",
             padding: 10,
           }}
+          onPress={() => {
+            console.log("delete button ");
+          }}
         >
           <Animated.View
             style={{
-              width: 40,
-              height: 40,
+              width: 35,
+              height: 35,
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -242,7 +241,7 @@ const Components = ({
             }}
           >
             <Image
-              style={{ width: 70, height: 70 }}
+              style={{ width: 45, height: 45 }}
               source={require("../assets/icons8-delete-button-200.png")}
               resizeMode="contain"
             />

@@ -2,10 +2,11 @@ import { View, Text, Image, ScrollView, Pressable, Alert } from "react-native";
 import { SvgXml } from "react-native-svg";
 import AlarmCard from "../Components/AlarmCard";
 import DialogueBox from "../Components/DialogueBox";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Alarm } from "../Constants";
 import { useNavigation } from "@react-navigation/native";
 import * as Location from "expo-location";
+import { SavedAlarmsContext, SavedAlarmsContextType } from "../Context";
 
 const AlarmScreen = () => {
   useEffect(() => {
@@ -20,20 +21,7 @@ const AlarmScreen = () => {
   const navigation = useNavigation();
   const [DialogueBoxInformation, setDialogueBoxInformation] = useState<Alarm>();
   const [modalVisible, setModalVisible] = useState(false);
-  const [alarms, setAlarms] = useState<Alarm[]>([
-    {
-      status: "on",
-      distance: 5,
-      location: "Home",
-      id: 0,
-    },
-    {
-      status: "off",
-      distance: 10,
-      location: "Work",
-      id: 1,
-    },
-  ]);
+  const { alarms, setAlarms } = useContext(SavedAlarmsContext);
 
   function onAlarmSet(alarm: Alarm) {
     setDialogueBoxInformation(alarm);
