@@ -19,10 +19,6 @@ const AlarmSettingsModal = ({
   setEditAlarmModalVisible,
   modalInformation,
 }: AlarmSettingsModalProps) => {
-  if (!EditAlarmModalVisible) {
-    setEditAlarmModalVisible(false);
-    return;
-  }
   return (
     <Modal
       onRequestClose={() => {
@@ -88,7 +84,9 @@ const AlarmSettingsModal = ({
           </View>
           <View style={styles.thirdViewOptions}>
             <Text style={[styles.textStyle]}>Distance</Text>
-            <Text style={[styles.textStyle]}>{modalInformation?.distance}</Text>
+            <Text style={[styles.textStyle]}>
+              {modalInformation?.distance} km
+            </Text>
           </View>
           <View
             style={[

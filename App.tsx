@@ -10,6 +10,7 @@ import {
   MainContext,
 } from "./src/Context";
 import Main from "./src/containers/Main";
+import { PaperProvider } from "react-native-paper";
 
 // states of both locations are gonna initiate here
 // fetching of user location at first stage is gonna be here, caching will also be implemented here
@@ -176,25 +177,27 @@ export default function App() {
   }
 
   return (
-    <MainContext.Provider
-      value={{
-        alarms,
-        setAlarms,
-        onAlarmActivate,
-        onAlarmDeactivate,
-        onAlarmAdd,
-        onAlarmDelete,
-      }}
-    >
-      <CurrentUserLocationContext.Provider
+    <PaperProvider>
+      <MainContext.Provider
         value={{
-          userLocation: userLocation,
-          setUserLocation: setuserLocation,
+          alarms,
+          setAlarms,
+          onAlarmActivate,
+          onAlarmDeactivate,
+          onAlarmAdd,
+          onAlarmDelete,
         }}
       >
-        <Main />
-      </CurrentUserLocationContext.Provider>
-    </MainContext.Provider>
+        <CurrentUserLocationContext.Provider
+          value={{
+            userLocation: userLocation,
+            setUserLocation: setuserLocation,
+          }}
+        >
+          <Main />
+        </CurrentUserLocationContext.Provider>
+      </MainContext.Provider>
+    </PaperProvider>
   );
 }
 

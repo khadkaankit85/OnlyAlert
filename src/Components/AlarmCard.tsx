@@ -184,7 +184,7 @@ const Components = ({
                   alignItems: "center",
                 }}
               >
-                <Pressable
+                <TouchableOpacity
                   onPressIn={handlePressIn}
                   onPressOut={handlePressOut}
                   onPress={() => {
@@ -217,7 +217,7 @@ const Components = ({
                       {alarm.distance}km radius
                     </Text>
                   </Animated.View>
-                </Pressable>
+                </TouchableOpacity>
 
                 <View>
                   <Switch

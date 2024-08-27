@@ -11,6 +11,7 @@ import {
 } from "../Context";
 import * as Location from "expo-location";
 import { calculateTheDistanceBetweenTwoCoordinates } from "../Utils";
+import CreateAlarmCard from "./CreateAlarmCard";
 
 interface MapComponentProps {
   initialRegion: {
@@ -29,6 +30,7 @@ const MapComponent = ({ initialRegion }: MapComponentProps) => {
   const { selectedLocation, setSelectedLocation } = selectedLocationContext;
   const { userLocation, setUserLocation } = userLocationContext;
 
+  const [distance, setDistance] = useState(-1);
   const [showCenterMarker, setShowCenterMarker] = useState(false);
   const [centerCoords, setCenterCoords] =
     useState<Location.LocationObjectCoords>({
@@ -114,6 +116,7 @@ const MapComponent = ({ initialRegion }: MapComponentProps) => {
         newCenterCoords
       );
       console.log("distance is ", distance);
+      setDistance(distance);
       setShowCenterMarker(distance >= 50);
     }
 
@@ -160,7 +163,9 @@ const MapComponent = ({ initialRegion }: MapComponentProps) => {
           />
         )}
       </MapView>
-
+      {selectedLocation?.readableAddress?.city && (
+        <CreateAlarmCard distance={distance} />
+      )}
       {/* Center Marker */}
       {showCenterMarker && (
         <View
