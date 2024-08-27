@@ -7,7 +7,7 @@ import { Alarm } from "./src/Constants";
 import {
   CurrentUserLocationContext,
   DetailedUserLocationType,
-  SavedAlarmsContext,
+  MainContext,
 } from "./src/Context";
 import Main from "./src/containers/Main";
 
@@ -39,6 +39,84 @@ export default function App() {
       location: "Work",
       id: 1,
     },
+    {
+      status: "off",
+      distance: 10,
+      location: "Work",
+      id: 1,
+    },
+    {
+      status: "off",
+      distance: 10,
+      location: "Work",
+      id: 1,
+    },
+    {
+      status: "off",
+      distance: 10,
+      location: "Work",
+      id: 1,
+    },
+    {
+      status: "off",
+      distance: 10,
+      location: "Work",
+      id: 1,
+    },
+    {
+      status: "off",
+      distance: 10,
+      location: "Work",
+      id: 1,
+    },
+    {
+      status: "off",
+      distance: 10,
+      location: "Work",
+      id: 1,
+    },
+    {
+      status: "off",
+      distance: 10,
+      location: "Work",
+      id: 1,
+    },
+    {
+      status: "off",
+      distance: 10,
+      location: "Work",
+      id: 1,
+    },
+    {
+      status: "off",
+      distance: 10,
+      location: "Work",
+      id: 1,
+    },
+    {
+      status: "off",
+      distance: 10,
+      location: "Work",
+      id: 1,
+    },
+    {
+      status: "off",
+      distance: 10,
+      location: "Work",
+      id: 1,
+    },
+    {
+      status: "off",
+      distance: 10,
+      location: "Work",
+      id: 1,
+    },
+    {
+      status: "off",
+      distance: 10,
+      location: "Work",
+      id: 1,
+    },
   ]);
 
   useEffect(() => {
@@ -59,7 +137,6 @@ export default function App() {
         longitude: location.coords.longitude,
       });
       if (address) {
-        console.log("uselocation set from app.tsx");
         setuserLocation({
           readableAddress: address[0],
           mathematicalAddress: location,
@@ -67,6 +144,19 @@ export default function App() {
       }
     })();
   }, []);
+
+  function onAlarmActivate(alarm: Alarm) {
+    console.log("activated");
+  }
+  function onAlarmDeactivate(alarm: Alarm) {
+    console.log("deactivated");
+  }
+  function onAlarmAdd(alarm: Alarm) {
+    console.log("added");
+  }
+  function onAlarmDelete(alarm: Alarm) {
+    console.log("deleted");
+  }
 
   const fontsLoaded = useFonts({
     montserrat: require("./src/assets/fonts/Montserrat/static/Montserrat-Bold.ttf"),
@@ -86,10 +176,14 @@ export default function App() {
   }
 
   return (
-    <SavedAlarmsContext.Provider
+    <MainContext.Provider
       value={{
-        alarms: alarms,
-        setAlarms: setAlarms,
+        alarms,
+        setAlarms,
+        onAlarmActivate,
+        onAlarmDeactivate,
+        onAlarmAdd,
+        onAlarmDelete,
       }}
     >
       <CurrentUserLocationContext.Provider
@@ -100,14 +194,13 @@ export default function App() {
       >
         <Main />
       </CurrentUserLocationContext.Provider>
-    </SavedAlarmsContext.Provider>
+    </MainContext.Provider>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "fff",
     alignItems: "center",
     justifyContent: "center",
   },

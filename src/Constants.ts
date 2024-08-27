@@ -6,7 +6,8 @@ export type Alarm= {
     label?: string;
     status: "on" | "off";
     id: number;
-    Coordinates?: LatLng
+    Coordinates?: LatLng,
+    sound?: string
 
   }
 export  type SelectedLocationContextType = {

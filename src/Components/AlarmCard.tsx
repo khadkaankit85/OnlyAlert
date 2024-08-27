@@ -1,18 +1,27 @@
-import { View, Image, Text, Pressable, Animated } from "react-native";
+import {
+  View,
+  Image,
+  Text,
+  Pressable,
+  Animated,
+  TouchableOpacity,
+} from "react-native";
 import { useState, useRef } from "react";
 import { Alarm } from "../Constants";
 import { Switch } from "react-native-paper";
 import GestureRecognizer from "react-native-swipe-gestures";
 interface AlarmCardProps {
-  onAlarmSet: (alarm: Alarm) => void;
   onDistanceChange: (alarm: Alarm) => void;
   alarm: Alarm;
+  setSelectedAlarm: (alarm: Alarm) => void;
+  setEditAlarmModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Components = ({
-  onAlarmSet,
   onDistanceChange,
   alarm,
+  setSelectedAlarm,
+  setEditAlarmModalVisible,
 }: AlarmCardProps) => {
   const [isAlarmOn, setIsAlarmOn] = useState(alarm.status === "on");
   const [isDeleteButtonVisible, setIsDeleteButtonVisible] = useState(false);
@@ -73,12 +82,6 @@ const Components = ({
 
   return (
     <GestureRecognizer
-      style={{
-        width: "100%",
-        flex: 1,
-        flexDirection: "row",
-        justifyContent: "space-between",
-      }}
       onSwipeLeft={() => {
         setIsDeleteButtonVisible(true);
         swipeToShowDeleteButton();
@@ -88,166 +91,179 @@ const Components = ({
         swipeToHideDeleteButton();
       }}
     >
-      <Animated.View
-        style={[
-          {
-            width: isDeleteButtonVisible ? "100%" : "100%",
-            height: 110,
-            flexDirection: "row",
-            borderRadius: 10,
-            backgroundColor: "white",
-            marginTop: 14,
-            padding: 10,
-          },
-          { transform: [{ translateX: translateView }] },
-        ]}
+      <Pressable
+        style={{
+          width: "100%",
+          flex: 1,
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+        onPress={() => {
+          setSelectedAlarm(alarm);
+          setEditAlarmModalVisible(true);
+        }}
       >
-        <View
-          style={{
-            flex: 1.6 / 5,
-          }}
-        >
-          <Image
-            resizeMode="cover"
-            style={{
-              width: "100%",
-              height: "100%",
-              borderRadius: 25,
-            }}
-            source={{
-              uri: "https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png",
-            }}
-          />
-        </View>
-        <View
-          style={{
-            flex: 3.4 / 5,
-            paddingHorizontal: 10,
-            justifyContent: "space-between",
-
-            //   backgroundColor: "blue",
-          }}
+        <Animated.View
+          style={[
+            {
+              width: isDeleteButtonVisible ? "100%" : "100%",
+              height: 110,
+              flexDirection: "row",
+              borderRadius: 10,
+              backgroundColor: "white",
+              marginTop: 14,
+              padding: 10,
+            },
+            { transform: [{ translateX: translateView }] },
+          ]}
         >
           <View
             style={{
-              flex: 1.4 / 3,
-              // backgroundColor: "red",
+              flex: 1.6 / 5,
             }}
           >
-            <Text
+            <Image
+              resizeMode="cover"
               style={{
-                fontWeight: "bold",
-                fontFamily: "ubuntu",
+                width: "100%",
+                height: "100%",
+                borderRadius: 25,
               }}
-            >
-              {alarm.distance}Km Away
-            </Text>
-            <Text
-              style={{
-                fontSize: 20,
-                fontWeight: "bold",
-                fontFamily: "ubuntu",
+              source={{
+                uri: "https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png",
               }}
-            >
-              {alarm.location}
-            </Text>
+            />
           </View>
-
           <View
             style={{
-              flex: 1.4 / 3,
-              flexDirection: "row",
+              flex: 3.4 / 5,
+              paddingHorizontal: 10,
               justifyContent: "space-between",
-              // backgroundColor: "green",
+
+              //   backgroundColor: "blue",
             }}
           >
             <View
               style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                flex: 1,
-                alignItems: "center",
+                flex: 1.4 / 3,
+                // backgroundColor: "red",
               }}
             >
-              <Pressable
-                onPressIn={handlePressIn}
-                onPressOut={handlePressOut}
-                onPress={() => {
-                  onDistanceChange(alarm);
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  fontFamily: "ubuntu",
                 }}
               >
-                <Animated.View
-                  style={{
-                    borderColor: "black",
-                    backgroundColor: backgroundColor,
-                    maxWidth: 100,
-                    padding: 5,
-                    borderRadius: 20,
-                    borderWidth: 1,
-                    paddingHorizontal: 10,
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
+                {alarm.distance}Km Away
+              </Text>
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: "bold",
+                  fontFamily: "ubuntu",
+                }}
+              >
+                {alarm.location}
+              </Text>
+            </View>
+
+            <View
+              style={{
+                flex: 1.4 / 3,
+                flexDirection: "row",
+                justifyContent: "space-between",
+                // backgroundColor: "green",
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  flex: 1,
+                  alignItems: "center",
+                }}
+              >
+                <Pressable
+                  onPressIn={handlePressIn}
+                  onPressOut={handlePressOut}
+                  onPress={() => {
+                    onDistanceChange(alarm);
                   }}
                 >
-                  <Text
+                  <Animated.View
                     style={{
+                      borderColor: "black",
+                      backgroundColor: backgroundColor,
                       maxWidth: 100,
-                      overflow: "hidden",
-                      height: "auto",
-                      fontSize: 12,
-                      maxHeight: 20,
+                      padding: 5,
+                      borderRadius: 20,
+                      borderWidth: 1,
+                      paddingHorizontal: 10,
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
                     }}
                   >
-                    {alarm.distance}km radius
-                  </Text>
-                </Animated.View>
-              </Pressable>
+                    <Text
+                      style={{
+                        maxWidth: 100,
+                        overflow: "hidden",
+                        height: "auto",
+                        fontSize: 12,
+                        maxHeight: 20,
+                      }}
+                    >
+                      {alarm.distance}km radius
+                    </Text>
+                  </Animated.View>
+                </Pressable>
 
-              <View>
-                <Switch
-                  value={isAlarmOn}
-                  onValueChange={(value) => {
-                    if (value) {
-                      onAlarmSet(alarm);
-                    }
-                    setIsAlarmOn((prev) => !prev);
-                  }}
-                />
+                <View>
+                  <Switch
+                    value={isAlarmOn}
+                    onValueChange={(value) => {
+                      if (value) {
+                        console.log("on alarm set shall be implemented here");
+                      }
+                      setIsAlarmOn((prev) => !prev);
+                    }}
+                  />
+                </View>
               </View>
             </View>
           </View>
-        </View>
-      </Animated.View>
-      {isDeleteButtonVisible && (
-        <Pressable
-          style={{
-            width: "20%",
-            justifyContent: "center",
-            padding: 10,
-          }}
-          onPress={() => {
-            console.log("delete button ");
-          }}
-        >
-          <Animated.View
+        </Animated.View>
+        {isDeleteButtonVisible && (
+          <Pressable
             style={{
-              width: 35,
-              height: 35,
-              display: "flex",
+              width: "20%",
               justifyContent: "center",
-              alignItems: "center",
-              transform: [{ translateX: animateDeleteButton }],
+              padding: 10,
+            }}
+            onPress={() => {
+              console.log("delete button ");
             }}
           >
-            <Image
-              style={{ width: 45, height: 45 }}
-              source={require("../assets/icons8-delete-button-200.png")}
-              resizeMode="contain"
-            />
-          </Animated.View>
-        </Pressable>
-      )}
+            <Animated.View
+              style={{
+                width: 35,
+                height: 35,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                transform: [{ translateX: animateDeleteButton }],
+              }}
+            >
+              <Image
+                style={{ width: 45, height: 45 }}
+                source={require("../assets/icons8-delete-button-200.png")}
+                resizeMode="contain"
+              />
+            </Animated.View>
+          </Pressable>
+        )}
+      </Pressable>
     </GestureRecognizer>
   );
 };

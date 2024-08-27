@@ -1,6 +1,6 @@
 // SearchBar.js
 import { useContext } from "react";
-import { View, TextInput, Pressable, Image } from "react-native";
+import { View, TextInput, Image, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import backButton from "../assets/icons8-back-50.png";
 import {
@@ -14,7 +14,6 @@ const SearchBar = () => {
   const { selectedLocation, setSelectedLocation } = useContext(
     SelectedLocationContext
   );
-  console.log("from search bar", selectedLocation);
   const { userLocation, setUserLocation } = useContext(
     CurrentUserLocationContext
   );
@@ -34,7 +33,7 @@ const SearchBar = () => {
         borderRadius: 50,
       }}
     >
-      <Pressable
+      <TouchableOpacity
         style={{
           justifyContent: "center",
           alignItems: "center",
@@ -50,7 +49,7 @@ const SearchBar = () => {
             height: 35,
           }}
         />
-      </Pressable>
+      </TouchableOpacity>
 
       <TextInput
         placeholder={

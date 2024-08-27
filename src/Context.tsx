@@ -47,11 +47,19 @@ export const CurrentUserLocationContext =
     setUserLocation: () => {},
   });
 
-export type SavedAlarmsContextType = {
+export type MainContextType = {
   alarms: Alarm[];
   setAlarms: Dispatch<SetStateAction<Alarm[]>>;
+  onAlarmActivate: (alarm: Alarm) => void;
+  onAlarmDeactivate: (alarm: Alarm) => void;
+  onAlarmDelete: (alarm: Alarm) => void;
+  onAlarmAdd: (alarm: Alarm) => void;
 };
-export const SavedAlarmsContext = createContext<SavedAlarmsContextType>({
+export const MainContext = createContext<MainContextType>({
   alarms: [],
   setAlarms: () => {},
+  onAlarmActivate: () => {},
+  onAlarmDeactivate: () => {},
+  onAlarmDelete: () => {},
+  onAlarmAdd: () => {},
 });

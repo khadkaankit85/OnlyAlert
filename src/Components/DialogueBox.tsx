@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { View, Text, Modal, Pressable, StyleSheet, Button } from "react-native";
+import { View, Text, Pressable, StyleSheet, Button } from "react-native";
 import { Alarm } from "../Constants";
-import { SvgXml } from "react-native-svg";
 import AnimatedButton from "./AnimatedButton";
+import { Modal, Portal } from "react-native-paper";
 
 interface DialogueBoxProps {
   modalVisible: boolean;
@@ -18,12 +18,11 @@ const DialogueBox = ({
   console.log("mounted the modal");
 
   return (
-    <View style={styles.container}>
+    <Portal>
       <Modal
-        animationType="none"
-        transparent={true}
         visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
+        onDismiss={() => setModalVisible(false)}
+        style={styles.container}
       >
         <View style={styles.modalBackground}>
           <View style={styles.modalView}>
@@ -62,7 +61,7 @@ const DialogueBox = ({
           </View>
         </View>
       </Modal>
-    </View>
+    </Portal>
   );
 };
 
@@ -70,7 +69,6 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "red",
   },
   modalBackground: {
     flex: 1,

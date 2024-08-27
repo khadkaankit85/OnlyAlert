@@ -22,7 +22,6 @@ const CreateAlarmScreen = () => {
       readableAddress: undefined,
       mathematicalAddress: undefined,
     });
-  console.log(userLocation);
   if (userLocation?.mathematicalAddress === undefined) {
     return <LoadingScreen />;
   }
