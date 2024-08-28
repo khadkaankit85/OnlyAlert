@@ -31,7 +31,7 @@ const MapComponent = ({ initialRegion }: MapComponentProps) => {
   const { selectedLocation, setSelectedLocation } = selectedLocationContext;
   const { userLocation, setUserLocation } = userLocationContext;
 
-  const [distance, setDistance] = useState(-1);
+  const [distance, setDistance] = useState(0);
   const [showCenterMarker, setShowCenterMarker] = useState(false);
   const [centerCoords, setCenterCoords] =
     useState<Location.LocationObjectCoords>({
@@ -120,8 +120,6 @@ const MapComponent = ({ initialRegion }: MapComponentProps) => {
         userLocation.mathematicalAddress.coords,
         newCenterCoords
       );
-      console.log("distance is ", distance);
-      setDistance(distance);
       setShowCenterMarker(distance >= 50);
     }
 
@@ -141,10 +139,16 @@ const MapComponent = ({ initialRegion }: MapComponentProps) => {
               ...prevLocation,
               readableAddress: address[0],
             }));
+            setDistance(
+              calculateTheDistanceBetweenTwoCoordinates(
+                userLocation?.mathematicalAddress?.coords,
+                newCenterCoords
+              )
+            );
           }
         }
       })();
-    }, 2000);
+    }, 1500);
   };
 
   return (
@@ -168,9 +172,10 @@ const MapComponent = ({ initialRegion }: MapComponentProps) => {
           />
         )}
       </MapView>
-      {selectedLocation?.readableAddress?.city ||
-      selectedLocation?.readableAddress?.street ||
-      selectedLocation?.readableAddress?.name ? (
+      {(selectedLocation?.readableAddress?.city ||
+        selectedLocation?.readableAddress?.street ||
+        selectedLocation?.readableAddress?.name) &&
+      distance ? (
         <CreateAlarmCard
           distance={distance}
           setModalVisible={setModalVisible}

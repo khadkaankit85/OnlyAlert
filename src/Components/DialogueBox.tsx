@@ -15,8 +15,6 @@ const DialogueBox = ({
   setModalVisible,
   DialogueBoxInformation,
 }: DialogueBoxProps) => {
-  console.log("mounted the modal");
-
   return (
     <Portal>
       <Modal

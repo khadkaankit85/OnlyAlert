@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useRef, useState } from "react";
+import React, { useContext, useMemo, useRef, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -20,19 +20,19 @@ import {
 import { MainContext } from "../Context";
 import { Alarm } from "../Constants";
 import uuid from "react-native-uuid";
+
 interface CreateAlarmCardProps {
   distance: number;
   setModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
   setDialogueBoxInformation: (alarm: Alarm) => void;
 }
+
 const CreateAlarmCard = ({
   distance,
   setModalVisible,
   setDialogueBoxInformation,
 }: CreateAlarmCardProps) => {
   const { selectedLocation } = useContext(SelectedLocationContext);
-
-  //context to create alarms
   const { onAlarmAdd, alarms } = useContext(MainContext);
 
   // rings at this distance
@@ -40,6 +40,11 @@ const CreateAlarmCard = ({
 
   // Create a new Animated.ValueXY instance for tracking position
   const pan = useRef(new Animated.ValueXY()).current;
+
+  // State to keep track of the last created alarm ID
+  const [lastCreatedAlarmId, setLastCreatedAlarmId] = useState<string | null>(
+    null
+  );
 
   // This handler will be called every time a gesture event occurs
   const onGestureEvent = Animated.event(
@@ -55,17 +60,56 @@ const CreateAlarmCard = ({
       pan.flattenOffset(); // Ensure the offset is applied to the position
     }
   };
-  //to get the most readable and informative address
+
+  // to get the most readable and informative address
   const address = getTheMostMeaningfulLocationName(selectedLocation);
+
   const imageLink = useMemo(
     () => getRandomImageForAlarmCard("https://placecats.com/300/200"),
     [selectedLocation?.readableAddress]
   );
 
-  // state to keep track of last created alarm id
-  const [lastCreatedAlarmId, setlastCreatedAlarmId] = useState<
-    number[] | string
-  >([0]);
+  function addAlarmAndShowDialogueBox() {
+    const newAlarmId = uuid.v4("").toString();
+    // might exist some bug here-----------------------------------------------------------------------
+    setLastCreatedAlarmId(newAlarmId);
+
+    // Add the new alarm
+    onAlarmAdd({
+      id: newAlarmId,
+      status: "on",
+      distance: distance,
+      location: address,
+      Coordinates: {
+        latitude: selectedLocation?.mathematicalAddress?.coords.latitude || 0,
+        longitude: selectedLocation?.mathematicalAddress?.coords.longitude || 0,
+      },
+      image: imageLink,
+      ringsWhen: distnceWhereItRings,
+    });
+
+    // Trigger modal visibility update
+    setModalVisible(true);
+  }
+
+  useEffect(() => {
+    if (lastCreatedAlarmId) {
+      const getAlarmByIdOrFallback = (
+        alarms: Alarm[],
+        lastCreatedAlarmId: string
+      ): Alarm => {
+        const foundAlarm = alarms.find(
+          (alarm) => alarm.id === lastCreatedAlarmId
+        );
+        console.log(foundAlarm);
+        return foundAlarm || alarms[alarms.length - 1];
+      };
+
+      setDialogueBoxInformation(
+        getAlarmByIdOrFallback(alarms, lastCreatedAlarmId)
+      );
+    }
+  }, [lastCreatedAlarmId, alarms, setDialogueBoxInformation]);
 
   return (
     <PanGestureHandler
@@ -121,39 +165,7 @@ const CreateAlarmCard = ({
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                setlastCreatedAlarmId(uuid.v4());
-                onAlarmAdd({
-                  id: lastCreatedAlarmId,
-                  status: "on",
-                  distance: distance,
-                  location: (() => {
-                    return getTheMostMeaningfulLocationName(selectedLocation);
-                  })(),
-                  Coordinates: {
-                    latitude:
-                      selectedLocation?.mathematicalAddress?.coords.latitude ||
-                      0,
-                    longitude:
-                      selectedLocation?.mathematicalAddress?.coords.longitude ||
-                      0,
-                  },
-                  image: imageLink,
-                  ringsWhen: distnceWhereItRings,
-                });
-                const getAlarmByIdOrFallback = (
-                  alarms: Alarm[],
-                  lastCreatedAlarmId: number[] | string
-                ): Alarm => {
-                  const foundAlarm = alarms.find(
-                    (alarm) => alarm.id === lastCreatedAlarmId
-                  );
-                  return foundAlarm || alarms[alarms.length - 1];
-                };
-                setDialogueBoxInformation(
-                  getAlarmByIdOrFallback(alarms, lastCreatedAlarmId)
-                );
-
-                setModalVisible(true);
+                addAlarmAndShowDialogueBox();
               }}
             >
               <View
