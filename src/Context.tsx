@@ -50,10 +50,10 @@ export const CurrentUserLocationContext =
 export type MainContextType = {
   alarms: Alarm[];
   setAlarms: Dispatch<SetStateAction<Alarm[]>>;
-  onAlarmActivate: (alarm: Alarm) => void;
-  onAlarmDeactivate: (alarm: Alarm) => void;
-  onAlarmDelete: (alarm: Alarm) => void;
-  onAlarmAdd: (alarm: Alarm) => void;
+  onAlarmActivate: (alarm: Alarm, value: boolean) => void;
+  onAlarmDeactivate: (alarm: Alarm, value: boolean) => void;
+  onAlarmDelete: (id: number[] | string) => void;
+  onAlarmAdd: (newAlarm: Alarm) => void;
 };
 export const MainContext = createContext<MainContextType>({
   alarms: [],

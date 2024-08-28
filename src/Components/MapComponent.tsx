@@ -3,7 +3,7 @@ import MapView, { Marker, Region } from "react-native-maps";
 import { View, Image, Alert } from "react-native";
 import userLocationImg from "../assets/icons8-location-100.png";
 import centerMarkerImg from "../assets/icons8-user-location-64.png";
-import { mapStyle } from "../Constants";
+import { Alarm, mapStyle } from "../Constants";
 import {
   SelectedLocationContext,
   CurrentUserLocationContext,
@@ -12,6 +12,7 @@ import {
 import * as Location from "expo-location";
 import { calculateTheDistanceBetweenTwoCoordinates } from "../Utils";
 import CreateAlarmCard from "./CreateAlarmCard";
+import DialogueBox from "./DialogueBox";
 
 interface MapComponentProps {
   initialRegion: {
@@ -45,6 +46,10 @@ const MapComponent = ({ initialRegion }: MapComponentProps) => {
 
   // ref for the timeout to get the readable address
   const getReadableAddress = useRef<NodeJS.Timeout | null>(null);
+
+  // to control modal visibility, the one that confirms the alarm creation
+  const [modalVisible, setModalVisible] = useState(false);
+  const [DialogueBoxInformation, setDialogueBoxInformation] = useState<Alarm>();
 
   // useEffect(() => {
   //   (async () => {
@@ -166,8 +171,19 @@ const MapComponent = ({ initialRegion }: MapComponentProps) => {
       {selectedLocation?.readableAddress?.city ||
       selectedLocation?.readableAddress?.street ||
       selectedLocation?.readableAddress?.name ? (
-        <CreateAlarmCard distance={distance} />
+        <CreateAlarmCard
+          distance={distance}
+          setModalVisible={setModalVisible}
+          setDialogueBoxInformation={setDialogueBoxInformation}
+        />
       ) : null}
+      {
+        <DialogueBox
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          DialogueBoxInformation={DialogueBoxInformation}
+        />
+      }
 
       {/* Center Marker */}
       {showCenterMarker && (

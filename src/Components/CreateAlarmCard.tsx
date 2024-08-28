@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from "react";
+import React, { useContext, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -13,12 +13,30 @@ import {
 } from "react-native-gesture-handler";
 
 import { SelectedLocationContext } from "../Context";
-
+import {
+  getRandomImageForAlarmCard,
+  getTheMostMeaningfulLocationName,
+} from "../Utils";
+import { MainContext } from "../Context";
+import { Alarm } from "../Constants";
+import uuid from "react-native-uuid";
 interface CreateAlarmCardProps {
   distance: number;
+  setModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  setDialogueBoxInformation: (alarm: Alarm) => void;
 }
-const CreateAlarmCard = ({ distance }: CreateAlarmCardProps) => {
+const CreateAlarmCard = ({
+  distance,
+  setModalVisible,
+  setDialogueBoxInformation,
+}: CreateAlarmCardProps) => {
   const { selectedLocation } = useContext(SelectedLocationContext);
+
+  //context to create alarms
+  const { onAlarmAdd, alarms } = useContext(MainContext);
+
+  // rings at this distance
+  const [distnceWhereItRings, setDistnceWhereItRings] = useState(100);
 
   // Create a new Animated.ValueXY instance for tracking position
   const pan = useRef(new Animated.ValueXY()).current;
@@ -38,40 +56,16 @@ const CreateAlarmCard = ({ distance }: CreateAlarmCardProps) => {
     }
   };
   //to get the most readable and informative address
-  const address =
-    selectedLocation?.readableAddress?.streetNumber &&
-    selectedLocation?.readableAddress?.street &&
-    selectedLocation?.readableAddress?.city
-      ? `${selectedLocation.readableAddress.streetNumber} ${selectedLocation.readableAddress.street}, ${selectedLocation.readableAddress.city}`
-      : selectedLocation?.readableAddress?.name &&
-        selectedLocation?.readableAddress?.city
-      ? `${selectedLocation.readableAddress.name}, ${selectedLocation.readableAddress.city}`
-      : selectedLocation?.readableAddress?.name &&
-        selectedLocation?.readableAddress?.region
-      ? `${selectedLocation.readableAddress.name}, ${selectedLocation.readableAddress.region}`
-      : selectedLocation?.readableAddress?.street &&
-        selectedLocation?.readableAddress?.city
-      ? `${selectedLocation.readableAddress.street}, ${selectedLocation.readableAddress.city}`
-      : selectedLocation?.readableAddress?.city &&
-        selectedLocation?.readableAddress?.region
-      ? `${selectedLocation.readableAddress.city}, ${selectedLocation.readableAddress.region}`
-      : selectedLocation?.readableAddress?.district &&
-        selectedLocation?.readableAddress?.city
-      ? `${selectedLocation.readableAddress.district}, ${selectedLocation.readableAddress.city}`
-      : selectedLocation?.readableAddress?.city &&
-        selectedLocation?.readableAddress?.country
-      ? `${selectedLocation.readableAddress.city}, ${selectedLocation.readableAddress.country}`
-      : selectedLocation?.readableAddress?.formattedAddress
-      ? selectedLocation.readableAddress.formattedAddress
-      : selectedLocation?.readableAddress?.name
-      ? selectedLocation.readableAddress.name
-      : selectedLocation?.readableAddress?.city
-      ? selectedLocation.readableAddress.city
-      : selectedLocation?.readableAddress?.region
-      ? selectedLocation.readableAddress.region
-      : selectedLocation?.readableAddress?.country
-      ? selectedLocation.readableAddress.country
-      : "Location not available";
+  const address = getTheMostMeaningfulLocationName(selectedLocation);
+  const imageLink = useMemo(
+    () => getRandomImageForAlarmCard("https://placecats.com/300/200"),
+    [selectedLocation?.readableAddress]
+  );
+
+  // state to keep track of last created alarm id
+  const [lastCreatedAlarmId, setlastCreatedAlarmId] = useState<
+    number[] | string
+  >([0]);
 
   return (
     <PanGestureHandler
@@ -90,7 +84,7 @@ const CreateAlarmCard = ({ distance }: CreateAlarmCardProps) => {
           <Image
             resizeMode="cover"
             source={{
-              uri: "https://picsum.photos/100",
+              uri: imageLink,
               width: 100,
               height: 100,
             }}
@@ -110,16 +104,56 @@ const CreateAlarmCard = ({ distance }: CreateAlarmCardProps) => {
           <View style={styles.notImageViewSecondChild}>
             <TouchableOpacity
               onPress={() => {
-                console.log("i shall implement the logic to toggle the radius");
+                if (distnceWhereItRings == 800) {
+                  setDistnceWhereItRings(300);
+                } else if (distnceWhereItRings == 300) {
+                  setDistnceWhereItRings(500);
+                } else if (distnceWhereItRings == 500) {
+                  setDistnceWhereItRings(600);
+                } else {
+                  setDistnceWhereItRings(800);
+                }
               }}
             >
               <View style={styles.notImageViewSecondChildButton}>
-                <Text>Set Radius</Text>
+                <Text>{distnceWhereItRings}m radius</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                console.log("create alarm function should be called here");
+                setlastCreatedAlarmId(uuid.v4());
+                onAlarmAdd({
+                  id: lastCreatedAlarmId,
+                  status: "on",
+                  distance: distance,
+                  location: (() => {
+                    return getTheMostMeaningfulLocationName(selectedLocation);
+                  })(),
+                  Coordinates: {
+                    latitude:
+                      selectedLocation?.mathematicalAddress?.coords.latitude ||
+                      0,
+                    longitude:
+                      selectedLocation?.mathematicalAddress?.coords.longitude ||
+                      0,
+                  },
+                  image: imageLink,
+                  ringsWhen: distnceWhereItRings,
+                });
+                const getAlarmByIdOrFallback = (
+                  alarms: Alarm[],
+                  lastCreatedAlarmId: number[] | string
+                ): Alarm => {
+                  const foundAlarm = alarms.find(
+                    (alarm) => alarm.id === lastCreatedAlarmId
+                  );
+                  return foundAlarm || alarms[alarms.length - 1];
+                };
+                setDialogueBoxInformation(
+                  getAlarmByIdOrFallback(alarms, lastCreatedAlarmId)
+                );
+
+                setModalVisible(true);
               }}
             >
               <View
@@ -201,9 +235,10 @@ const styles = StyleSheet.create({
   },
   largeText: {
     fontFamily: "ubuntu",
-    fontSize: 22,
+    fontSize: 20,
     textAlign: "left",
     marginTop: 10,
+    overflow: "hidden",
   },
   buttonText: {
     color: "white",

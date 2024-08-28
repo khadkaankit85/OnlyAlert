@@ -27,98 +27,7 @@ export default function App() {
   // context for alarm goes here
 
   // initializing alarms with a dummy data for now
-  const [alarms, setAlarms] = useState<Alarm[]>([
-    {
-      status: "on",
-      distance: 5,
-      location: "8 tansley avenue",
-      id: 0,
-    },
-    {
-      status: "off",
-      distance: 10,
-      location: "Work",
-      id: 1,
-    },
-    {
-      status: "off",
-      distance: 10,
-      location: "Work",
-      id: 1,
-    },
-    {
-      status: "off",
-      distance: 10,
-      location: "Work",
-      id: 1,
-    },
-    {
-      status: "off",
-      distance: 10,
-      location: "Work",
-      id: 1,
-    },
-    {
-      status: "off",
-      distance: 10,
-      location: "Work",
-      id: 1,
-    },
-    {
-      status: "off",
-      distance: 10,
-      location: "Work",
-      id: 1,
-    },
-    {
-      status: "off",
-      distance: 10,
-      location: "Work",
-      id: 1,
-    },
-    {
-      status: "off",
-      distance: 10,
-      location: "Work",
-      id: 1,
-    },
-    {
-      status: "off",
-      distance: 10,
-      location: "Work",
-      id: 1,
-    },
-    {
-      status: "off",
-      distance: 10,
-      location: "Work",
-      id: 1,
-    },
-    {
-      status: "off",
-      distance: 10,
-      location: "Work",
-      id: 1,
-    },
-    {
-      status: "off",
-      distance: 10,
-      location: "Work",
-      id: 1,
-    },
-    {
-      status: "off",
-      distance: 10,
-      location: "Work",
-      id: 1,
-    },
-    {
-      status: "off",
-      distance: 10,
-      location: "Work",
-      id: 1,
-    },
-  ]);
+  const [alarms, setAlarms] = useState<Alarm[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -146,17 +55,38 @@ export default function App() {
     })();
   }, []);
 
-  function onAlarmActivate(alarm: Alarm) {
-    console.log("activated");
+  function onAlarmActivate(alarm: Alarm, value: boolean) {
+    // status is changed to on, and then saved it to localstorage and some task is scheduled to track the location
+    const alarmAfterActivation = alarms.map((a) => {
+      if (a.id === alarm.id) {
+        a.status = value ? "on" : "off";
+      }
+      return a;
+    });
+
+    setAlarms(alarmAfterActivation);
+    console.log(
+      "gotta save that in localstorage and track location to make that ring"
+    );
   }
-  function onAlarmDeactivate(alarm: Alarm) {
-    console.log("deactivated");
+  function onAlarmDeactivate(alarm: Alarm, value: boolean) {
+    const alarmAfterDeactivation = alarms.map((a) => {
+      if (a.id === alarm.id) {
+        a.status = value ? "on" : "off";
+      }
+      return a;
+    });
+    setAlarms(alarmAfterDeactivation);
+    console.log("stop tracking user location");
   }
-  function onAlarmAdd(alarm: Alarm) {
-    console.log("added");
+  function onAlarmAdd(newAlarm: Alarm) {
+    setAlarms([...alarms, newAlarm]);
   }
-  function onAlarmDelete(alarm: Alarm) {
-    console.log("deleted");
+  function onAlarmDelete(id: number[] | string) {
+    const alarmAfterDeletion = alarms.filter((a) => {
+      return a.id !== id;
+    });
+    setAlarms(alarmAfterDeletion);
   }
 
   const fontsLoaded = useFonts({

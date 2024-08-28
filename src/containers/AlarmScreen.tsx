@@ -41,13 +41,14 @@ const AlarmScreen = () => {
     setAlarms((prevAlarms) => {
       const newAlarms = [...prevAlarms];
       const alarm = newAlarms[index];
-
-      if (alarm.distance === 1) {
-        alarm.distance = 2;
-      } else if (alarm.distance === 2) {
-        alarm.distance = 3;
+      if (alarm.ringsWhen == 800) {
+        alarm.ringsWhen = 300;
+      } else if (alarm.ringsWhen == 300) {
+        alarm.ringsWhen = 500;
+      } else if (alarm.ringsWhen === 500) {
+        alarm.ringsWhen = 600;
       } else {
-        alarm.distance = 1;
+        alarm.ringsWhen = 800;
       }
 
       return newAlarms;
@@ -116,6 +117,8 @@ const AlarmScreen = () => {
             alarm={alarm}
             setSelectedAlarm={setSelectedAlarm}
             setEditAlarmModalVisible={setEditAlarmModalVisible}
+            setDialogueBoxInformation={setDialogueBoxInformation}
+            setModalVisible={setModalVisible}
           />
         ))}
         <DialogueBox

@@ -7,6 +7,7 @@ import {
   SelectedLocationContext,
   CurrentUserLocationContext,
 } from "../Context";
+import { getTheMostMeaningfulLocationName } from "../Utils";
 
 const SearchBar = () => {
   const navigation = useNavigation();
@@ -53,16 +54,9 @@ const SearchBar = () => {
 
       <TextInput
         placeholder={
-          selectedLocation &&
-          selectedLocation.readableAddress?.streetNumber &&
-          selectedLocation.readableAddress?.street &&
-          selectedLocation.readableAddress.city
-            ? `${selectedLocation?.readableAddress.streetNumber}, ${selectedLocation?.readableAddress.street}, ${selectedLocation?.readableAddress.city}`
-            : userLocation?.readableAddress?.streetNumber &&
-              userLocation?.readableAddress?.street &&
-              userLocation?.readableAddress?.city
-            ? `${userLocation?.readableAddress.streetNumber}, ${userLocation?.readableAddress.street}, ${userLocation?.readableAddress.city}`
-            : "Search for a location"
+          getTheMostMeaningfulLocationName(selectedLocation) ||
+          getTheMostMeaningfulLocationName(userLocation) ||
+          "Search for a location"
         }
         style={{
           flex: 1,

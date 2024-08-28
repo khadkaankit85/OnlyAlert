@@ -41,13 +41,14 @@ const DialogueBox = ({
               <AnimatedButton />
             </View>
             <Text style={styles.modalText}>
-              Now you can relax and enjoy your trip. we will inform you are{" "}
+              Now you can relax and enjoy your trip. we will inform you when you
+              are{" "}
               <Text
                 style={{
                   fontWeight: "bold",
                 }}
               >
-                {DialogueBoxInformation?.distance}km away from{" "}
+                {Math.round(DialogueBoxInformation?.ringsWhen || 0)}m away from{" "}
                 {DialogueBoxInformation?.location}
               </Text>
             </Text>

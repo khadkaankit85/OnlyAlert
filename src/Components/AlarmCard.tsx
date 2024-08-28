@@ -6,15 +6,18 @@ import {
   Animated,
   TouchableOpacity,
 } from "react-native";
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
 import { Alarm } from "../Constants";
 import { Switch } from "react-native-paper";
 import GestureRecognizer from "react-native-swipe-gestures";
+import { MainContext } from "../Context";
 interface AlarmCardProps {
   onDistanceChange: (alarm: Alarm) => void;
   alarm: Alarm;
   setSelectedAlarm: (alarm: Alarm) => void;
   setEditAlarmModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  setDialogueBoxInformation: (alarm: Alarm) => void;
+  setModalVisible: (value: boolean) => void;
 }
 
 const Components = ({
@@ -22,12 +25,17 @@ const Components = ({
   alarm,
   setSelectedAlarm,
   setEditAlarmModalVisible,
+  setDialogueBoxInformation,
+  setModalVisible,
 }: AlarmCardProps) => {
-  const [isAlarmOn, setIsAlarmOn] = useState(alarm.status === "on");
   const [isDeleteButtonVisible, setIsDeleteButtonVisible] = useState(false);
 
   const backgroundColorAnim = useRef(new Animated.Value(0)).current;
   const animateDeleteButton = useRef(new Animated.Value(0)).current;
+
+  // global states
+  const { onAlarmActivate, onAlarmDeactivate, onAlarmDelete } =
+    useContext(MainContext);
 
   // Function to handle the button press (start animation)
   const handlePressIn = () => {
@@ -130,7 +138,7 @@ const Components = ({
                 borderRadius: 25,
               }}
               source={{
-                uri: "https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png",
+                uri: alarm?.image,
               }}
             />
           </View>
@@ -155,16 +163,18 @@ const Components = ({
                   fontFamily: "ubuntu",
                 }}
               >
-                {alarm.distance}Km Away
+                {Math.round(alarm?.distance)}m Away
               </Text>
               <Text
                 style={{
-                  fontSize: 20,
                   fontWeight: "bold",
                   fontFamily: "ubuntu",
+                  fontSize: 18,
+                  flexWrap: "wrap",
+                  height: 40,
                 }}
               >
-                {alarm.location}
+                {alarm?.location}
               </Text>
             </View>
 
@@ -214,19 +224,22 @@ const Components = ({
                         maxHeight: 20,
                       }}
                     >
-                      {alarm.distance}km radius
+                      {Math.round(alarm?.ringsWhen)}m radius
                     </Text>
                   </Animated.View>
                 </TouchableOpacity>
 
                 <View>
                   <Switch
-                    value={isAlarmOn}
+                    value={alarm?.status === "on"}
                     onValueChange={(value) => {
                       if (value) {
-                        console.log("on alarm set shall be implemented here");
+                        setDialogueBoxInformation(alarm);
+                        onAlarmActivate(alarm, value);
+                        setModalVisible(true);
+                      } else {
+                        onAlarmDeactivate(alarm, value);
                       }
-                      setIsAlarmOn((prev) => !prev);
                     }}
                   />
                 </View>
@@ -242,7 +255,9 @@ const Components = ({
               padding: 10,
             }}
             onPress={() => {
-              console.log("delete button ");
+              onAlarmDelete(alarm.id);
+              setIsDeleteButtonVisible(false);
+              swipeToHideDeleteButton();
             }}
           >
             <Animated.View

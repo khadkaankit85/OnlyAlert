@@ -2,12 +2,15 @@ import { LatLng } from "react-native-maps";
 
 export type Alarm= {
     distance: number;
+    ringsWhen: number;
     location: string;
     label?: string;
     status: "on" | "off";
-    id: number;
-    Coordinates?: LatLng,
-    sound?: string
+    id: number[]|string;
+    Coordinates: LatLng,
+    sound?: string,
+    image:string,
+    dateCreated?:Date
 
   }
 export  type SelectedLocationContextType = {

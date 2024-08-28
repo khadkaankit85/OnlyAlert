@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Alarm } from "../Constants";
+import { MainContext } from "../Context";
+import { useContext } from "react";
 interface AlarmSettingsModalProps {
   EditAlarmModalVisible: boolean;
   setEditAlarmModalVisible: (status: boolean) => void;
@@ -19,6 +21,7 @@ const AlarmSettingsModal = ({
   setEditAlarmModalVisible,
   modalInformation,
 }: AlarmSettingsModalProps) => {
+  const { onAlarmDelete } = useContext(MainContext);
   return (
     <Modal
       onRequestClose={() => {
@@ -64,7 +67,7 @@ const AlarmSettingsModal = ({
           <View style={styles.secondViewOptions}>
             <Image
               source={{
-                uri: "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg",
+                uri: modalInformation?.image,
                 width: 150,
                 height: 150,
               }}
@@ -85,7 +88,7 @@ const AlarmSettingsModal = ({
           <View style={styles.thirdViewOptions}>
             <Text style={[styles.textStyle]}>Distance</Text>
             <Text style={[styles.textStyle]}>
-              {modalInformation?.distance} km
+              {Math.round(modalInformation?.distance || 0)} m
             </Text>
           </View>
           <View
@@ -115,6 +118,10 @@ const AlarmSettingsModal = ({
               backgroundColor: "#595959",
               padding: 15,
               borderRadius: 20,
+            }}
+            onPress={() => {
+              onAlarmDelete(modalInformation?.id || [0]);
+              setEditAlarmModalVisible(false);
             }}
           >
             <View>
