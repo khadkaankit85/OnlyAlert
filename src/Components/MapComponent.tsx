@@ -120,7 +120,7 @@ const MapComponent = ({ initialRegion }: MapComponentProps) => {
         userLocation.mathematicalAddress.coords,
         newCenterCoords
       );
-      setShowCenterMarker(distance >= 50);
+      setShowCenterMarker(distance >= 20);
     }
 
     //time to update the readable address

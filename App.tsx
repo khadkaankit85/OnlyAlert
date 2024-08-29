@@ -11,11 +11,14 @@ import {
 } from "./src/Context";
 import Main from "./src/containers/Main";
 import { PaperProvider } from "react-native-paper";
+import * as SQLite from "expo-sqlite";
 
 // states of both locations are gonna initiate here
 // fetching of user location at first stage is gonna be here, caching will also be implemented here
 
 export default function App() {
+  const db = SQLite.openDatabaseAsync("alarm.db");
+
   const [isSplash, setSplash] = useState(true);
 
   //states for current userlocation
@@ -31,6 +34,26 @@ export default function App() {
 
   useEffect(() => {
     (async () => {
+      // when first opened up, we would wanna create the db
+      db.then(async (db) => {
+        await db.execAsync(`
+          PRAGMA journal_mode = WAL;
+          CREATE TABLE IF NOT EXISTS alarms (
+            id TEXT PRIMARY KEY,       -- UUID is stored as TEXT
+            label TEXT,
+            status TEXT,
+            location TEXT,
+            ringsWhen INTEGER,
+            distance INTEGER,
+            image TEXT,
+            dateCreated TEXT,          -- Store date as a string (e.g., ISO format)
+            sound TEXT,
+            latitude REAL,             -- Store latitude as a REAL number
+            longitude REAL             -- Store longitude as a REAL number
+          );
+        `);
+      });
+
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         Alert.alert("Permission to access location was denied");
