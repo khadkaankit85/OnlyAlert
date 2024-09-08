@@ -58,6 +58,16 @@ const SearchBar = () => {
           getTheMostMeaningfulLocationName(userLocation) ||
           "Search for a location"
         }
+        onChange={(e) => {
+          setSelectedLocation({
+            readableAddress: undefined,
+            mathematicalAddress: undefined,
+          });
+          setUserLocation({
+            readableAddress: undefined,
+            mathematicalAddress: undefined,
+          });
+        }}
         style={{
           flex: 1,
           marginLeft: 10,

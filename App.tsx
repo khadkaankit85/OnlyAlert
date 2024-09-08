@@ -1,4 +1,4 @@
-import { StyleSheet, View, Alert } from "react-native";
+import { StyleSheet, View, Alert, Text } from "react-native";
 import SplashScreen from "./src/containers/SplashScreen";
 import { useState, useEffect, createContext } from "react";
 import { useFonts } from "expo-font";
@@ -35,24 +35,6 @@ export default function App() {
   useEffect(() => {
     (async () => {
       // when first opened up, we would wanna create the db
-      db.then(async (db) => {
-        await db.execAsync(`
-          PRAGMA journal_mode = WAL;
-          CREATE TABLE IF NOT EXISTS alarms (
-            id TEXT PRIMARY KEY,       -- UUID is stored as TEXT
-            label TEXT,
-            status TEXT,
-            location TEXT,
-            ringsWhen INTEGER,
-            distance INTEGER,
-            image TEXT,
-            dateCreated TEXT,          -- Store date as a string (e.g., ISO format)
-            sound TEXT,
-            latitude REAL,             -- Store latitude as a REAL number
-            longitude REAL             -- Store longitude as a REAL number
-          );
-        `);
-      });
 
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
@@ -113,8 +95,8 @@ export default function App() {
   }
 
   const fontsLoaded = useFonts({
-    montserrat: require("./src/assets/fonts/Montserrat/static/Montserrat-Bold.ttf"),
-    ubuntu: require("./src/assets/fonts/Ubuntu/Ubuntu-Bold.ttf"),
+    montserrat: require("./src/assets/fonts/Poppins/Poppins-Regular.ttf"),
+    ubuntu: require("./src/assets/fonts/Poppins/Poppins-Regular.ttf"),
   });
   if (fontsLoaded) {
     setTimeout(() => {

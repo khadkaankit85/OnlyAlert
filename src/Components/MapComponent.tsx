@@ -51,28 +51,29 @@ const MapComponent = ({ initialRegion }: MapComponentProps) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [DialogueBoxInformation, setDialogueBoxInformation] = useState<Alarm>();
 
-  // useEffect(() => {
-  //   (async () => {
-  //     let { status } = await Location.requestForegroundPermissionsAsync();
-  //     if (status !== "granted") {
-  //       Alert.alert("Permission to access location was not granted");
-  //       return;
-  //     }
-  //     let location = await Location.getCurrentPositionAsync({
-  //       accuracy: Location.Accuracy.High,
-  //     });
-  //     let address = await Location.reverseGeocodeAsync({
-  //       latitude: location.coords.latitude,
-  //       longitude: location.coords.longitude,
-  //     });
-  //     if (address) {
-  //       setUserLocation({
-  //         readableAddress: address[0],
-  //         mathematicalAddress: location,
-  //       });
-  //     }
-  //   })();
-  // }, [setUserLocation]);
+  useEffect(() => {
+    console.log("from map component user location ", userLocation);
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permission to access location was not granted");
+        return;
+      }
+      let location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+      });
+      let address = await Location.reverseGeocodeAsync({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+      if (address) {
+        setUserLocation({
+          readableAddress: address[0],
+          mathematicalAddress: location,
+        });
+      }
+    })();
+  }, [setUserLocation]);
 
   // useEffect(() => {
   //   if (

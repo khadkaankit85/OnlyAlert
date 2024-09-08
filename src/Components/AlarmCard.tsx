@@ -115,7 +115,7 @@ const Components = ({
           style={[
             {
               width: isDeleteButtonVisible ? "100%" : "100%",
-              height: 110,
+              height: "auto",
               flexDirection: "row",
               borderRadius: 10,
               backgroundColor: "white",
@@ -128,6 +128,7 @@ const Components = ({
           <View
             style={{
               flex: 1.6 / 5,
+              // backgroundColor: "#D3D3D3",
             }}
           >
             <Image
@@ -171,7 +172,6 @@ const Components = ({
                   fontFamily: "ubuntu",
                   fontSize: 18,
                   flexWrap: "wrap",
-                  height: 40,
                 }}
               >
                 {alarm?.location}
