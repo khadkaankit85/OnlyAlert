@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
 import { View, Alert, TouchableWithoutFeedback, Keyboard } from "react-native";
-import * as Location from "expo-location";
 import LoadingScreen from "../Components/LoadingScreen";
 import MapComponent from "../Components/MapComponent";
 import OverlayComponent from "../Components/SearchBar";
@@ -10,7 +9,6 @@ import {
   UserLocationContextType,
   CurrentUserLocationContext,
 } from "../Context";
-import { SelectedLocationContextType } from "../Constants";
 
 const CreateAlarmScreen = () => {
   const { userLocation, setUserLocation } = useContext<UserLocationContextType>(

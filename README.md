@@ -1,19 +1,51 @@
-# The Problem
+# About
 
-Have you ever tried to take a short nap on the train only to wake up and find yourself at the end of the line? This raises the issue of how not to miss your stop. How could passengers wake up just before the train arrives at their station?
+A cross-platform mobile application using React Native that helps users set location-based alarms. This app triggers alarms with high accuracy upon reaching the destination, ensuring you never miss your stop again!
 
-# The Goal
+## Under Construction
 
-Developing a smartphone app that could sound an alert just before the user’s stop.
+![banner](https://github.com/khadkaankit85/Assets/blob/master/MapAlarm/1.png?raw=true)
 
-# User Tasks
+## Contribution
 
-1. **Search the train station**
-2. **Set the location**
-3. **Set the alarm radius distance**
+Contributions are very welcome! Here is how you can contribute to this project:
 
-## User Stories
+1. Fork this project.
+2. Create a branch.
+3. Make your changes and commit them.
+4. Push to the branch.
+5. Create a pull request.
 
-1. **When I travel by train, I want to sleep knowing that I will wake up before I get to the station where I need to get out of the train.**
+## Installation
 
-2. **When I travel by train, I want to know when to leave the train, without looking constantly where I currently am.**
+1. Clone the repository:
+
+   ```bash
+   git clone <repository-url>
+   ```
+
+2. Install the dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Start the application:
+
+   ```bash
+   npm start
+   ```
+
+## Features
+
+- Set location-based alarms
+- High accuracy in triggering alarms
+- Cross-platform support (iOS and Android)
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+
+## Contact
+
+For any inquiries or issues, please contact [khadkaankit85](mailto:khadkaankit85@example.com).

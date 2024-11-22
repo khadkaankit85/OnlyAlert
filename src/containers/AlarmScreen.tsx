@@ -1,13 +1,4 @@
-import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  Pressable,
-  Alert,
-  Touchable,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, ScrollView, Alert, TouchableOpacity } from "react-native";
 import { SvgXml } from "react-native-svg";
 import AlarmCard from "../Components/AlarmCard";
 import DialogueBox from "../Components/DialogueBox";
@@ -16,9 +7,7 @@ import { Alarm } from "../Constants";
 import { useNavigation } from "@react-navigation/native";
 import * as Location from "expo-location";
 import { MainContext, MainContextType } from "../Context";
-import { PaperProvider } from "react-native-paper";
 import AlarmSettingsModal from "../Components/AlarmSettingsModal";
-import CreateAlarmCard from "../Components/CreateAlarmCard";
 
 const AlarmScreen = () => {
   useEffect(() => {
@@ -108,19 +97,38 @@ const AlarmScreen = () => {
           padding: 25,
         }}
       >
-        {alarms.map((alarm, index) => (
-          <AlarmCard
-            key={index}
-            onDistanceChange={() => {
-              onDistanceChange(index);
+        {alarms.length > 0 ? (
+          alarms.map((alarm, index) => (
+            <AlarmCard
+              key={index}
+              onDistanceChange={() => {
+                onDistanceChange(index);
+              }}
+              alarm={alarm}
+              setSelectedAlarm={setSelectedAlarm}
+              setEditAlarmModalVisible={setEditAlarmModalVisible}
+              setDialogueBoxInformation={setDialogueBoxInformation}
+              setModalVisible={setModalVisible}
+            />
+          ))
+        ) : (
+          <View
+            style={{
+              flex: 1,
+              alignItems: "center",
+              justifyContent: "center",
             }}
-            alarm={alarm}
-            setSelectedAlarm={setSelectedAlarm}
-            setEditAlarmModalVisible={setEditAlarmModalVisible}
-            setDialogueBoxInformation={setDialogueBoxInformation}
-            setModalVisible={setModalVisible}
-          />
-        ))}
+          >
+            <Text
+              style={{
+                color: "black",
+                fontSize: 20,
+              }}
+            >
+              Your Alarms are here
+            </Text>
+          </View>
+        )}
         <DialogueBox
           modalVisible={modalVisible}
           setModalVisible={setModalVisible}

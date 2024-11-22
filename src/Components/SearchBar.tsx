@@ -1,6 +1,20 @@
 // SearchBar.js
-import { useContext } from "react";
-import { View, TextInput, Image, TouchableOpacity } from "react-native";
+import {
+  LegacyRef,
+  MutableRefObject,
+  useContext,
+  useRef,
+  useState,
+} from "react";
+import {
+  View,
+  TextInput,
+  Image,
+  TouchableOpacity,
+  TextInputProps,
+  NativeSyntheticEvent,
+  TextInputChangeEventData,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import backButton from "../assets/icons8-back-50.png";
 import {
@@ -18,6 +32,14 @@ const SearchBar = () => {
   const { userLocation, setUserLocation } = useContext(
     CurrentUserLocationContext
   );
+
+  const searchLocationInputValue = useRef<string>("");
+
+  const handleInputChange = (inputvalue: string) => {
+    searchLocationInputValue.current = inputvalue;
+    console.log(searchLocationInputValue.current);
+  };
+
   return (
     <View
       style={{
@@ -58,16 +80,8 @@ const SearchBar = () => {
           getTheMostMeaningfulLocationName(userLocation) ||
           "Search for a location"
         }
-        onChange={(e) => {
-          setSelectedLocation({
-            readableAddress: undefined,
-            mathematicalAddress: undefined,
-          });
-          setUserLocation({
-            readableAddress: undefined,
-            mathematicalAddress: undefined,
-          });
-        }}
+        autoComplete="address-line2"
+        onChangeText={handleInputChange}
         style={{
           flex: 1,
           marginLeft: 10,
